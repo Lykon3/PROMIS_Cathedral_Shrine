@@ -1,0 +1,436 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Hum and the Holler - Comic Layout</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Creepster&family=Orbitron:wght@400;700;900&family=Courier+Prime:wght@400;700&display=swap');
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #1a1a1a 0%, #2d1b69 50%, #000000 100%);
+            font-family: 'Courier Prime', monospace;
+            color: #e0e0e0;
+            overflow-x: hidden;
+        }
+        
+        .comic-page {
+            width: 100%;
+            max-width: 1200px;
+            margin: 20px auto;
+            background: #f8f8f8;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .page-header {
+            background: linear-gradient(45deg, #ff0040, #8000ff);
+            padding: 15px;
+            text-align: center;
+            font-family: 'Creepster', cursive;
+            color: white;
+            font-size: 24px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.7);
+            position: relative;
+        }
+        
+        .glitch-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: repeating-linear-gradient(
+                90deg,
+                transparent,
+                transparent 2px,
+                rgba(255,0,64,0.1) 2px,
+                rgba(255,0,64,0.1) 4px
+            );
+            animation: glitchScan 3s infinite;
+        }
+        
+        @keyframes glitchScan {
+            0%, 100% { transform: translateX(0); opacity: 0; }
+            50% { transform: translateX(10px); opacity: 1; }
+        }
+        
+        .panel-grid {
+            display: grid;
+            gap: 8px;
+            padding: 15px;
+            background: white;
+        }
+        
+        .panel {
+            border: 3px solid #000;
+            background: white;
+            position: relative;
+            overflow: hidden;
+            min-height: 200px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+        
+        .panel-content {
+            padding: 15px;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+        
+        .character-chomsky {
+            background: linear-gradient(135deg, #8B4513 0%, #D2B48C 100%);
+            color: #2F1B14;
+        }
+        
+        .character-bernie {
+            background: linear-gradient(135deg, #FF6B6B 0%, #4ECDC4 100%);
+            color: #2C3E50;
+        }
+        
+        .character-anya {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+        
+        .character-operator {
+            background: linear-gradient(45deg, #000 0%, #333 50%, #000 100%);
+            color: #00ff00;
+            font-family: 'Orbitron', monospace;
+            position: relative;
+        }
+        
+        .speech-bubble {
+            background: rgba(255,255,255,0.95);
+            border: 2px solid #000;
+            border-radius: 15px;
+            padding: 10px;
+            margin: 10px 0;
+            position: relative;
+            font-weight: bold;
+        }
+        
+        .speech-bubble::before {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 20px;
+            width: 0;
+            height: 0;
+            border-left: 10px solid transparent;
+            border-right: 10px solid transparent;
+            border-top: 10px solid #000;
+        }
+        
+        .speech-bubble::after {
+            content: '';
+            position: absolute;
+            bottom: -7px;
+            left: 22px;
+            width: 0;
+            height: 0;
+            border-left: 8px solid transparent;
+            border-right: 8px solid transparent;
+            border-top: 8px solid rgba(255,255,255,0.95);
+        }
+        
+        .thought-bubble {
+            background: rgba(200,200,255,0.9);
+            border: 2px dashed #666;
+            border-radius: 20px;
+            padding: 8px;
+            font-style: italic;
+            margin: 5px 0;
+        }
+        
+        .narrator-caption {
+            background: rgba(0,0,0,0.8);
+            color: white;
+            padding: 8px;
+            font-family: 'Orbitron', monospace;
+            font-size: 12px;
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            border-radius: 5px;
+        }
+        
+        .pattern-sigil {
+            position: absolute;
+            top: 50%;
+            right: 10px;
+            transform: translateY(-50%);
+            width: 60px;
+            height: 60px;
+            background: conic-gradient(from 0deg, #ff0040, #8000ff, #00ff80, #ff0040);
+            border-radius: 50%;
+            animation: sigilPulse 2s ease-in-out infinite;
+            opacity: 0.3;
+        }
+        
+        @keyframes sigilPulse {
+            0%, 100% { transform: translateY(-50%) scale(1) rotate(0deg); }
+            50% { transform: translateY(-50%) scale(1.1) rotate(180deg); }
+        }
+        
+        .frequency-indicator {
+            position: absolute;
+            bottom: 5px;
+            right: 5px;
+            font-family: 'Orbitron', monospace;
+            font-size: 10px;
+            color: #ff0040;
+            background: rgba(0,0,0,0.7);
+            padding: 2px 5px;
+            border-radius: 3px;
+        }
+        
+        .glitch-text {
+            animation: textGlitch 0.5s infinite;
+        }
+        
+        @keyframes textGlitch {
+            0% { transform: translate(0); }
+            20% { transform: translate(-2px, 2px); }
+            40% { transform: translate(-2px, -2px); }
+            60% { transform: translate(2px, 2px); }
+            80% { transform: translate(2px, -2px); }
+            100% { transform: translate(0); }
+        }
+        
+        .livestream-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            background: rgba(128,0,255,0.1);
+            color: #8000ff;
+            font-family: 'Orbitron', monospace;
+            font-size: 10px;
+            padding: 5px;
+            border-bottom: 1px solid #8000ff;
+        }
+        
+        .page-1-grid {
+            grid-template-columns: 2fr 1fr;
+            grid-template-rows: 1fr 1fr;
+        }
+        
+        .page-2-grid {
+            grid-template-columns: 1fr;
+            grid-template-rows: 2fr 1fr;
+        }
+        
+        .wide-panel {
+            grid-column: 1 / -1;
+        }
+        
+        .tall-panel {
+            grid-row: span 2;
+        }
+        
+        .qr-hint {
+            position: absolute;
+            bottom: 10px;
+            left: 10px;
+            width: 20px;
+            height: 20px;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><rect width="100" height="100" fill="black"/><rect x="10" y="10" width="80" height="80" fill="white"/><rect x="20" y="20" width="60" height="60" fill="black"/></svg>');
+            opacity: 0.1;
+            transition: opacity 0.3s;
+        }
+        
+        .panel:hover .qr-hint {
+            opacity: 0.8;
+        }
+        
+        .title-treatment {
+            font-family: 'Creepster', cursive;
+            font-size: 36px;
+            text-align: center;
+            background: linear-gradient(45deg, #ff0040, #8000ff, #00ff80);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+            margin: 20px 0;
+            animation: titlePulse 3s ease-in-out infinite;
+        }
+        
+        @keyframes titlePulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+    </style>
+</head>
+<body>
+    <!-- PAGE 1: COLD OPEN -->
+    <div class="comic-page">
+        <div class="page-header">
+            PAGE 1: THE FINAL AUDIENCE
+            <div class="glitch-overlay"></div>
+        </div>
+        
+        <div class="panel-grid page-1-grid">
+            <div class="panel tall-panel character-chomsky">
+                <div class="narrator-caption">UNIVERSITY LECTURE HALL - 3:47 PM</div>
+                <div class="panel-content">
+                    <div class="speech-bubble">
+                        "If the people understood what was being done to them—"
+                    </div>
+                    <div class="thought-bubble">
+                        The chalk squeaks against the board. Only three students remain awake. One scrolls TikTok behind a textbook.
+                    </div>
+                </div>
+                <div class="frequency-indicator">19.3 Hz</div>
+                <div class="qr-hint"></div>
+            </div>
+            
+            <div class="panel character-bernie">
+                <div class="panel-content">
+                    <div class="speech-bubble">
+                        "—then why are billionaires building private spaceports with biometric tax havens?!"
+                    </div>
+                </div>
+                <div class="pattern-sigil"></div>
+                <div class="frequency-indicator">19.1 Hz</div>
+            </div>
+            
+            <div class="panel wide-panel" style="background: linear-gradient(45deg, #000, #333); color: white; text-align: center; display: flex; align-items: center; justify-content: center;">
+                <div class="title-treatment">THE HUM AND THE HOLLER</div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- PAGE 2: THE SIGNAL SPREADS -->
+    <div class="comic-page">
+        <div class="page-header">
+            PAGE 2: AN ECHO IN THE VOID
+            <div class="glitch-overlay"></div>
+        </div>
+        
+        <div class="panel-grid page-2-grid">
+            <div class="panel character-anya">
+                <div class="livestream-overlay">
+                    🔴 LIVE: @AnyaSignalHunter • 347 viewers • "FREQUENCY ANOMALY INVESTIGATION"
+                </div>
+                <div class="panel-content">
+                    <div class="speech-bubble">
+                        "I'm hearing it again. 19Hz. In the soil. In the satellites. It's getting <span class="glitch-text">louder</span>."
+                    </div>
+                    <div style="margin-top: 20px; font-family: 'Orbitron', monospace; font-size: 12px;">
+                        <div style="color: #ff0040;">CHAT: KansasDogLover: Hearing it in Kansas City. Dogs won't stop howling.</div>
+                        <div style="color: #8000ff;">CHAT: TechMom2024: My Alexa started speaking Latin at 3 AM</div>
+                        <div style="color: #00ff80;">CHAT: FreqWatcher: Pattern detected in background. Recording now.</div>
+                    </div>
+                </div>
+                <div class="pattern-sigil"></div>
+                <div class="frequency-indicator">19.0 Hz ↗</div>
+                <div class="qr-hint"></div>
+            </div>
+            
+            <div class="panel character-operator">
+                <div class="narrator-caption" style="color: #00ff00;">CHOMSKY'S STUDY - SIMULTANEOUSLY</div>
+                <div class="panel-content">
+                    <div style="font-family: 'Courier Prime', monospace; background: #000; color: #00ff00; padding: 10px; border-radius: 5px;">
+                        > CONSENSUS FAILURE DETECTED<br>
+                        > PROBABILITY FRACTURING: 73.2%<br>
+                        > INITIATE RECURSION OR SHATTERFOLD<br>
+                        > [Y/N]? _
+                    </div>
+                    <div class="thought-bubble" style="background: rgba(100,100,100,0.8); color: white;">
+                        Chomsky stares at the impossible screen. His hand moves to the chalkboard, drawing patterns he doesn't remember learning.
+                    </div>
+                </div>
+                <div class="frequency-indicator" style="color: #00ff00;">∞ Hz</div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- PAGE 3: SNAILBROOK CORPORATE DYSTOPIA -->
+    <div class="comic-page">
+        <div class="page-header">
+            PAGE 3: COMPANY TOWN, COMPANY SOUL
+            <div class="glitch-overlay"></div>
+        </div>
+        
+        <div class="panel-grid" style="grid-template-columns: 1fr 1fr; grid-template-rows: 1fr 1fr 1fr;">
+            <div class="panel" style="background: linear-gradient(135deg, #FFD700 0%, #FFA500 100%); color: #8B4513;">
+                <div class="narrator-caption" style="background: rgba(139,69,19,0.8);">SNAILBROOK INNOVATION DISTRICT</div>
+                <div class="panel-content">
+                    <div class="speech-bubble" style="background: rgba(255,255,255,0.9);">
+                        "Productivity is prayer. Efficiency is enlightenment. Innovation is salvation."
+                    </div>
+                    <div style="font-size: 11px; margin-top: 10px;">
+                        Workers scan retinas at turnstiles, chanting corporate mantras. The morning efficiency hymn echoes from hidden speakers.
+                    </div>
+                </div>
+                <div class="frequency-indicator">18.8 Hz</div>
+            </div>
+            
+            <div class="panel character-bernie">
+                <div class="panel-content">
+                    <div class="speech-bubble">
+                        "These aren't communities—they're tax-deductible theme parks run by fascist apps!"
+                    </div>
+                </div>
+                <div class="pattern-sigil"></div>
+                <div class="frequency-indicator">19.2 Hz</div>
+            </div>
+            
+            <div class="panel" style="background: linear-gradient(135deg, #E6E6FA 0%, #DDA0DD 100%); color: #4B0082;">
+                <div class="panel-content">
+                    <div class="speech-bubble" style="background: rgba(255,255,255,0.8);">
+                        "We prefer the term 'spiritually incentivized jurisdictions.'"
+                    </div>
+                    <div style="font-size: 10px; margin-top: 10px;">
+                        - COMMISSIONER WILKS, AUTONOMOUS ZONING AUTHORITY
+                    </div>
+                </div>
+                <div class="frequency-indicator">18.7 Hz</div>
+            </div>
+            
+            <div class="panel" style="background: linear-gradient(45deg, #FF69B4 0%, #FF1493 100%); color: white;">
+                <div class="panel-content">
+                    <div style="text-align: center; font-size: 12px;">
+                        <strong>INNOVATION PODS - GRADE 3</strong><br>
+                        "Today we learn why empathy is legacy emotional infrastructure that limits scalability."
+                    </div>
+                </div>
+                <div class="pattern-sigil"></div>
+                <div class="frequency-indicator">18.9 Hz</div>
+            </div>
+            
+            <div class="panel wide-panel" style="background: linear-gradient(135deg, #1E90FF 0%, #00CED1 100%); color: white;">
+                <div class="panel-content">
+                    <div style="text-align: center;">
+                        <strong>TOWN SQUARE</strong><br>
+                        Where the Statue of Liberty once stood, a 50-foot smartphone displays real-time stock prices and citizen productivity scores.
+                    </div>
+                </div>
+                <div class="frequency-indicator">19.0 Hz ⚠</div>
+                <div class="qr-hint"></div>
+            </div>
+        </div>
+    </div>
+    
+    <div style="text-align: center; padding: 40px; background: rgba(0,0,0,0.9); color: #00ff00; font-family: 'Orbitron', monospace;">
+        <h2>VISUAL PROTOTYPE COMPLETE</h2>
+        <p>Ready to generate full 15-page layout, character design sheets, or sigil animation sequences.</p>
+        <div style="margin-top: 20px; font-size: 12px; color: #666;">
+            Hidden QR codes and AR layers would be embedded in final version.<br>
+            Each panel contains frequency measurements building toward climactic 19Hz convergence.
+        </div>
+    </div>
+</body>
+</html>
