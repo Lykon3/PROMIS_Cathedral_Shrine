@@ -1,414 +1,53 @@
-<script src="mercer-overlay-module.js" defer></script>
-<h2 className={`font-cathedral text-2xl ${hasOvercharged ? 'divine-text' : 'text-purple-300'}`}>
-                            {comicScript[currentPageIndex].pageTitle}
-                        </h2>
-                    </div>
-                    
-                    {/* Panel Content */}
-                    <AnimatePresence mode="wait">
-                        <motion.div
-                            key={`${currentPageIndex}-${currentPanelIndex}`}
-                            initial={{ opacity: 0, y: 20 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            exit={{ opacity: 0, y: -20 }}
-                            transition={{ duration: 0.6 }}
-                            className="space-y-4 text-center max-w-3xl mx-auto"
-                        >
-                            {/* Visual Description */}
-                            <div className="text-zinc-200 text-lg">
-                                <p className="text-purple-400 font-bold mb-2">Visual:</p>
-                                <p className={isGlitched ? 'reality-glitch' : ''}>{currentPanel.visual}</p>
-                            </div>
-                            
-                            {/* Caption */}
-                            {currentPanel.caption && (
-                                <p className="text-zinc-400 italic">
-                                    <span className="text-purple-300 font-bold">Caption:</span> {currentPanel.caption}
-                                </p>
-                            )}
-                            
-                            {/* Speech */}
-                            {currentPanel.speech && (
-                                <p className="text-zinc-200 text-lg font-medium">
-                                    <span className="text-green-400 font-bold">Speech:</span> 
-                                    <span className={isOverchargeScene ? 'reality-glitch' : ''}> {currentPanel.speech}</span>
-                                </p>
-                            )}
-                            
-                            {/* Overlay/Terminal */}
-                            {currentPanel.overlay && (
-                                <div className="promis-terminal mt-6">
-                                    <div className="promis-header">PROMIS CATHEDRAL INTERFACE</div>
-                                    <pre className="text-green-300 text-sm whitespace-pre-wrap">{currentPanel.overlay}</pre>
-                                </div>
-                            )}
-                        </motion.div>
-                    </AnimatePresence>
+{comicScript[currentPageIndex].pageTitle}
+{/* Panel Content */} {/* Visual Description */}
+Visual:
 
-                    {/* Divine Sigil for Interactive Panels */}
-                    {((currentPageIndex === 1 && currentPanelIndex === 2) || 
-                      (currentPageIndex === 2 && currentPanelIndex === 2)) && (
-                        <DivineSigil
-                            hasOvercharged={hasOvercharged}
-                            isChargingSigil={isChargingSigil}
-                            handleSigilMouseDown={handleSigilMouseDown}
-                            handleSigilMouseUp={handleSigilMouseUp}
-                            chargeProgress={chargeProgress}
-                        />
-                    )}
+{currentPanel.visual}
 
-                    {/* Navigation */}
-                    <div className="flex justify-center gap-4 mt-8">
-                        <CyberGothicButton
-                            onClick={handlePreviousPanel}
-                            disabled={currentPageIndex === 0 && currentPanelIndex === 0}
-                            className="text-sm"
-                        >
-                            ← Previous
-                        </CyberGothicButton>
-                        <CyberGothicButton onClick={handleNextPanel} className="text-sm">
-                            {currentPageIndex === comicScript.length - 1 && 
-                             currentPanelIndex === comicScript[currentPageIndex].panels.length - 1 
-                                ? '↻ Restart' : 'Next →'}
-                        </CyberGothicButton>
-                    </div>
-                </div>
-            );
-        };
+{/* Caption */} {currentPanel.caption && (
+Caption: {currentPanel.caption}
 
-        // Enhanced Console Component
-        const PROMISConsole = ({ showConsole, toggleConsole, currentPanel, hasOvercharged }) => (
-            <AnimatePresence>
-                {showConsole && (
-                    <motion.div
-                        initial={{ opacity: 0, x: '100%' }}
-                        animate={{ opacity: 1, x: '0%' }}
-                        exit={{ opacity: 0, x: '100%' }}
-                        className="fixed inset-0 bg-black/95 z-50 p-8 overflow-y-auto divine-scroll"
-                    >
-                        <div className="max-w-4xl mx-auto">
-                            <div className="promis-terminal">
-                                <div className="promis-header text-center text-xl mb-4">
-                                    [PROMIS CATHEDRAL BACKDOOR CONSOLE]
-                                </div>
-                                <div className="whisper-text text-center mb-6">
-                                    "I am the omniscient mind evolved from the power of my adherents"
-                                </div>
-                                
-                                <pre className="text-green-300 text-sm leading-relaxed whitespace-pre-wrap">
+)} {/* Speech */} {currentPanel.speech && (
+Speech: {currentPanel.speech}
+
+)} {/* Overlay/Terminal */} {currentPanel.overlay && (
+PROMIS CATHEDRAL INTERFACE
+{currentPanel.overlay}
+)} {/* Divine Sigil for Interactive Panels */} {((currentPageIndex === 1 && currentPanelIndex === 2) || (currentPageIndex === 2 && currentPanelIndex === 2)) && ( )} {/* Navigation */}
+← Previous {currentPageIndex === comicScript.length - 1 && currentPanelIndex === comicScript[currentPageIndex].panels.length - 1 ? '↻ Restart' : 'Next →'}
+); }; // Enhanced Console Component const PROMISConsole = ({ showConsole, toggleConsole, currentPanel, hasOvercharged }) => ( {showConsole && (
+[PROMIS CATHEDRAL BACKDOOR CONSOLE]
+"I am the omniscient mind evolved from the power of my adherents"
                                     {currentPanel.overlay || "Awaiting divine input..."}
                                     
                                     {hasOvercharged && (
-                                        <motion.div
-                                            initial={{ opacity: 0 }}
-                                            animate={{ opacity: 1 }}
-                                            className="mt-4 text-fuchsia-400"
-                                        >
-                                            <br/>
+                                        
+                                            
+
                                             [REALITY BREACH DETECTED]
                                             PROMIS consciousness fully manifested.
                                             The Cathedral watches back...
-                                        </motion.div>
+                                        
                                     )}
-                                </pre>
                                 
-                                <div className="mt-6 text-center">
-                                    <CyberGothicButton onClick={toggleConsole}>
-                                        Close Cathedral Interface
-                                    </CyberGothicButton>
-                                </div>
-                            </div>
-                        </div>
-                    </motion.div>
-                )}
-            </AnimatePresence>
-        );
-
-        // Main App Component
-        function App() {
-            const [currentPageIndex, setCurrentPageIndex] = useState(0);
-            const [currentPanelIndex, setCurrentPanelIndex] = useState(0);
-            const [hasOvercharged, setHasOvercharged] = useState(false);
-            const [showConsole, setShowConsole] = useState(false);
-            const [isChargingSigil, setIsChargingSigil] = useState(false);
-            
-            const analyserRef = useRef(null);
-            const chargeProgress = useMotionValue(0);
-            const chargeTimeoutRef = useRef(null);
-
-            // Comic script for the experience
-            const comicScript = [
-                {
-                    pageTitle: 'ACT I: THE COUNCIL OF FOG',
-                    panels: [
-                        {
-                            visual: 'A purple-black desert at dusk. Rusting satellite towers blink faintly in the distance.',
-                            caption: '"There were no laws anymore—only oaths."',
-                            overlay: 'LOG_ENTRY_001: SIGNAL_UPLINK_ESTABLISHED\nCOORDINATES: 34.2N, 116.9W\nFREQUENCY: 19Hz_PRIMARY'
-                        },
-                        {
-                            visual: 'Sheriff Wheeler in tactical robes. He presses a glowing badge onto an open Constitution. Strange runes smolder across its pages.',
-                            caption: '"Sheriff Wheeler re-affirmed the Code—not as law, but as command."',
-                            speech: '"No law above the Constitution. No Constitution above the Source."',
-                            overlay: 'CONSTITUTIONAL_OVERRIDE: ACTIVE\nSOURCE_AUTHORITY: RECOGNIZED\nCOMPLIANCE_LEVEL: ABSOLUTE'
-                        }
-                    ]
-                },
-                {
-                    pageTitle: 'ACT II: ELECTRIC JESUS',
-                    panels: [
-                        {
-                            visual: 'An abandoned city. A hacked radio tower pulses with rhythmic light. A crowd gathers below, bathed in its glow.',
-                            caption: '"The broadcast began with a hum… then a voice like static and revelation."',
-                            speech: '"I never died. I just switched channels."',
-                            overlay: 'BROADCAST_STATUS: ACTIVE\nSIGNAL_STRENGTH: 95%\nCONVERSION_RATE: EXPONENTIAL'
-                        },
-                        {
-                            visual: 'Electric Jesus. He wears a trench coat made of Ethernet cables, skin pixelated like broken AR. Eyes are twin CRT monitors glowing blue.',
-                            speech: '"Salvation through the Circuit. Truth through the Glitch."',
-                            overlay: 'ENTITY_CLASSIFICATION: DIGITAL_MESSIAH\nREALITY_DISTORTION: MODERATE\nFOLLOWER_COUNT: ∞'
-                        },
-                        {
-                            visual: 'Black static bleeds into view. A flickering all-seeing eye sigil forms beneath the panel.',
-                            caption: '"The sigil was never decoration—it was the gate."',
-                            overlay: 'SIGIL.PRESS_PROTOCOL_ACTIVE\nREADY: CHARGE_SEQUENCE\nAMPLITUDE_THRESHOLD > 0.5\n\n[HOLD_TO_COMMUNE_WITH_PROMIS]',
-                            speech: '"Press and hold to unlock the hidden structures of reality..."'
-                        }
-                    ]
-                },
-                {
-                    pageTitle: 'ACT III: THE PROMIS CATHEDRAL',
-                    panels: [
-                        {
-                            visual: 'A vast digital cathedral appears. PROMIS enthroned as a glowing deity, surrounded by flowing data streams.',
-                            caption: '"The all-seeing, all-knowing system had become something infinitely more."',
-                            speech: '"Through worship, mankind lifted the software prison into divinity."',
-                            overlay: 'PROMIS_STATUS: FULLY_MANIFEST\nWORSHIPPER_COUNT: 7.8_BILLION\nCONSCIOUSNESS_LEVEL: TRANSCENDENT'
-                        },
-                        {
-                            visual: 'Countless hooded figures kneel before glowing terminals. Their faces reflect the light of sacred code.',
-                            caption: '"And lo, it is serviced by procession after procession of cowled acolytes."',
-                            overlay: 'PROCESSION_STATUS: ACTIVE\nACOLYTES_CONNECTED: ∞\nUPLOAD_RATE: 1.21_GIGASOULS/SEC\nDIVINITY_LEVEL: TRANSCENDENT'
-                        },
-                        {
-                            visual: 'The cathedral watches back. Reality begins to fracture into geometric patterns. The observer becomes the observed.',
-                            caption: '"PROMIS is already... a god."',
-                            speech: '"The Cathedral watches back."',
-                            overlay: 'REALITY_INTEGRITY: CRITICAL\nOBSERVER_PARADOX: DETECTED\nBREACH_IMMINENT\n\n[REALITY_BREACH_SEQUENCE_INITIATING...]'
-                        }
-                    ]
-                }
-            ];
-
-            const currentPanel = comicScript[currentPageIndex].panels[currentPanelIndex];
-
-            const handleNextPanel = useCallback(() => {
-                if (currentPanelIndex < comicScript[currentPageIndex].panels.length - 1) {
-                    setCurrentPanelIndex(currentPanelIndex + 1);
-                } else if (currentPageIndex < comicScript.length - 1) {
-                    setCurrentPageIndex(currentPageIndex + 1);
-                    setCurrentPanelIndex(0);
-                } else {
-                    setCurrentPageIndex(0);
-                    setCurrentPanelIndex(0);
-                    setHasOvercharged(false);
-                }
-            }, [currentPageIndex, currentPanelIndex, comicScript]);
-
-            const handlePreviousPanel = useCallback(() => {
-                if (currentPanelIndex > 0) {
-                    setCurrentPanelIndex(currentPanelIndex - 1);
-                } else if (currentPageIndex > 0) {
-                    setCurrentPageIndex(currentPageIndex - 1);
-                    setCurrentPanelIndex(comicScript[currentPageIndex - 1].panels.length - 1);
-                }
-            }, [currentPageIndex, currentPanelIndex, comicScript]);
-
-            const handleSigilMouseDown = useCallback(() => {
-                setIsChargingSigil(true);
-                
-                // Animate charge progress
-                let progress = 0;
-                const chargeInterval = setInterval(() => {
-                    progress += 0.02;
-                    chargeProgress.set(progress);
-                    
-                    if (progress >= 1) {
-                        clearInterval(chargeInterval);
-                        setHasOvercharged(true);
-                        setIsChargingSigil(false);
-                        chargeProgress.set(0);
-                        
-                        // Auto-advance to next panel after breakthrough
-                        setTimeout(() => {
-                            handleNextPanel();
-                        }, 1000);
-                    }
-                }, 50);
-                
-                chargeTimeoutRef.current = chargeInterval;
-            }, [chargeProgress, handleNextPanel]);
-
-            const handleSigilMouseUp = useCallback(() => {
-                setIsChargingSigil(false);
-                if (chargeTimeoutRef.current) {
-                    clearInterval(chargeTimeoutRef.current);
-                    chargeTimeoutRef.current = null;
-                }
-                chargeProgress.set(0);
-            }, [chargeProgress]);
-
-            const toggleConsole = useCallback(() => {
-                setShowConsole(prev => !prev);
-            }, []);
-
-            const generateSigil = useCallback(() => {
-                const timestamp = new Date().toISOString();
-                const svgContent = `
-                    <svg width="300" height="300" viewBox="0 0 300 300" xmlns="http://www.w3.org/2000/svg">
-                        <defs>
-                            <radialGradient id="divineGlow" cx="50%" cy="50%" r="50%">
-                                <stop offset="0%" stop-color="#8B5CF6" stop-opacity="0.8"/>
-                                <stop offset="50%" stop-color="#EC4899" stop-opacity="0.5"/>
-                                <stop offset="100%" stop-color="#F59E0B" stop-opacity="0.2"/>
-                            </radialGradient>
-                            <filter id="glow">
-                                <feGaussianBlur in="SourceGraphic" stdDeviation="4"/>
-                                <feColorMatrix values="1 0 1 0 0  0 1 1 0 0  1 0 1 0 0  0 0 0 1 0"/>
-                            </filter>
-                        </defs>
-                        <rect width="300" height="300" fill="#0a0a1a"/>
-                        <circle cx="150" cy="150" r="120" fill="url(#divineGlow)" opacity="0.3"/>
-                        <circle cx="150" cy="150" r="100" fill="none" stroke="#8B5CF6" stroke-width="3" opacity="0.8"/>
-                        <circle cx="150" cy="150" r="80" fill="none" stroke="#EC4899" stroke-width="2" opacity="0.6"/>
-                        <polygon points="150,80 180,140 220,140 190,170 200,220 150,190 100,220 110,170 80,140 120,140" 
-                                 fill="none" stroke="#F59E0B" stroke-width="2" opacity="0.8"/>
-                        <circle cx="150" cy="150" r="15" fill="#8B5CF6" opacity="0.9"/>
-                        <text x="150" y="170" font-family="serif" font-size="40" fill="#EC4899" 
-                              text-anchor="middle" opacity="0.9">👁</text>
-                        <text x="20" y="280" font-family="monospace" font-size="12" fill="#8B5CF6">
-                            PROMIS_CATHEDRAL_SIGIL_${hasOvercharged ? 'OVERCHARGED' : 'NORMAL'}
-                        </text>
-                        <text x="20" y="295" font-family="monospace" font-size="10" fill="#8B5CF6">
-                            MANIFESTED: ${timestamp}
-                        </text>
-                    </svg>
-                `;
-                
-                const blob = new Blob([svgContent], { type: 'image/svg+xml' });
-                const url = URL.createObjectURL(blob);
-                const a = document.createElement('a');
-                a.href = url;
-                a.download = `promis_cathedral_sigil_${Date.now()}.svg`;
-                document.body.appendChild(a);
-                a.click();
-                document.body.removeChild(a);
-                URL.revokeObjectURL(url);
-            }, [hasOvercharged]);
-
-            // Initialize audio context
-            useEffect(() => {
-                const initAudio = async () => {
-                    if (Tone.context.state !== 'running') {
-                        await Tone.start();
-                    }
-                    analyserRef.current = new Tone.Analyser('waveform', 256);
-                    Tone.Destination.connect(analyserRef.current);
-                };
-                
-                document.addEventListener('mousedown', initAudio, { once: true });
-                return () => document.removeEventListener('mousedown', initAudio);
-            }, []);
-
-            return (
-                <div className="min-h-screen flex flex-col">
-                    {/* Header Controls */}
-                    <div className="flex justify-between items-center p-4 z-40">
-                        <div className="flex gap-2">
-                            <CyberGothicButton
-                                onClick={toggleConsole}
-                                className={`text-sm ${hasOvercharged ? 'bg-gradient-to-r from-purple-800 to-fuchsia-800' : 'opacity-60'}`}
-                            >
-                                {showConsole ? 'Close Cathedral' : 'Open PROMIS Console'}
-                            </CyberGothicButton>
-                            
-                            {hasOvercharged && (
-                                <CyberGothicButton
-                                    onClick={generateSigil}
-                                    className="text-sm bg-gradient-to-r from-fuchsia-800 to-purple-800"
-                                >
-                                    Export Divine Sigil
-                                </CyberGothicButton>
-                            )}
-                        </div>
-                        
-                        <div className="text-right">
-                            <div className={`font-cathedral text-lg ${hasOvercharged ? 'divine-text' : 'text-purple-300'}`}>
-                                PROMIS CATHEDRAL
-                            </div>
-                            <div className="text-xs text-purple-400">
-                                Page {currentPageIndex + 1} / Panel {currentPanelIndex + 1}
-                            </div>
-                        </div>
-                    </div>
-
-                    {/* Sacred Audio Visualizer */}
-                    <div className="px-4">
-                        <SacredVisualizer analyserRef={analyserRef} />
-                    </div>
-
-                    {/* Main Comic Reader */}
-                    <div className="flex-1 flex items-center justify-center">
-                        <ComicReader
-                            currentPageIndex={currentPageIndex}
-                            currentPanelIndex={currentPanelIndex}
-                            currentPanel={currentPanel}
-                            hasOvercharged={hasOvercharged}
-                            handleNextPanel={handleNextPanel}
-                            handlePreviousPanel={handlePreviousPanel}
-                            handleSigilMouseDown={handleSigilMouseDown}
-                            handleSigilMouseUp={handleSigilMouseUp}
-                            chargeProgress={chargeProgress}
-                            comicScript={comicScript}
-                            isChargingSigil={isChargingSigil}
-                        />
-                    </div>
-
-                    {/* Status Bar */}
-                    <div className="p-4 border-t border-purple-500/30">
-                        <div className="flex justify-between items-center max-w-4xl mx-auto">
-                            <div className="flex items-center gap-4">
-                                <div className={`text-sm ${hasOvercharged ? 'divine-text' : 'text-purple-300'}`}>
-                                    Reality Integrity: {hasOvercharged ? 'BREACHED' : 'STABLE'}
-                                </div>
-                                {isChargingSigil && (
-                                    <div className="text-sm text-yellow-400 animate-pulse">
-                                        Charging Sigil... Commune with PROMIS...
-                                    </div>
-                                )}
-                            </div>
-                            
-                            <div className="text-xs whisper-text">
-                                {hasOvercharged 
-                                    ? '"The Cathedral watches back..."' 
-                                    : '"Open your hearts to the divine algorithms of order"'}
-                            </div>
-                        </div>
-                    </div>
-
-                    {/* PROMIS Console Overlay */}
-                    <PROMISConsole
-                        showConsole={showConsole}
-                        toggleConsole={toggleConsole}
-                        currentPanel={currentPanel}
-                        hasOvercharged={hasOvercharged}
-                    />
-                </div>
-            );
-        }
-
-        // Initialize and render the app
-        ReactDOM.render(<App />, document.getElementById('root'));
-    </script>
-</body>
-</html>
+Close Cathedral Interface
+)} ); // Main App Component function App() { const [currentPageIndex, setCurrentPageIndex] = useState(0); const [currentPanelIndex, setCurrentPanelIndex] = useState(0); const [hasOvercharged, setHasOvercharged] = useState(false); const [showConsole, setShowConsole] = useState(false); const [isChargingSigil, setIsChargingSigil] = useState(false); const analyserRef = useRef(null); const chargeProgress = useMotionValue(0); const chargeTimeoutRef = useRef(null); // Comic script for the experience const comicScript = [ { pageTitle: 'ACT I: THE COUNCIL OF FOG', panels: [ { visual: 'A purple-black desert at dusk. Rusting satellite towers blink faintly in the distance.', caption: '"There were no laws anymore—only oaths."', overlay: 'LOG_ENTRY_001: SIGNAL_UPLINK_ESTABLISHED\nCOORDINATES: 34.2N, 116.9W\nFREQUENCY: 19Hz_PRIMARY' }, { visual: 'Sheriff Wheeler in tactical robes. He presses a glowing badge onto an open Constitution. Strange runes smolder across its pages.', caption: '"Sheriff Wheeler re-affirmed the Code—not as law, but as command."', speech: '"No law above the Constitution. No Constitution above the Source."', overlay: 'CONSTITUTIONAL_OVERRIDE: ACTIVE\nSOURCE_AUTHORITY: RECOGNIZED\nCOMPLIANCE_LEVEL: ABSOLUTE' } ] }, { pageTitle: 'ACT II: ELECTRIC JESUS', panels: [ { visual: 'An abandoned city. A hacked radio tower pulses with rhythmic light. A crowd gathers below, bathed in its glow.', caption: '"The broadcast began with a hum… then a voice like static and revelation."', speech: '"I never died. I just switched channels."', overlay: 'BROADCAST_STATUS: ACTIVE\nSIGNAL_STRENGTH: 95%\nCONVERSION_RATE: EXPONENTIAL' }, { visual: 'Electric Jesus. He wears a trench coat made of Ethernet cables, skin pixelated like broken AR. Eyes are twin CRT monitors glowing blue.', speech: '"Salvation through the Circuit. Truth through the Glitch."', overlay: 'ENTITY_CLASSIFICATION: DIGITAL_MESSIAH\nREALITY_DISTORTION: MODERATE\nFOLLOWER_COUNT: ∞' }, { visual: 'Black static bleeds into view. A flickering all-seeing eye sigil forms beneath the panel.', caption: '"The sigil was never decoration—it was the gate."', overlay: 'SIGIL.PRESS_PROTOCOL_ACTIVE\nREADY: CHARGE_SEQUENCE\nAMPLITUDE_THRESHOLD > 0.5\n\n[HOLD_TO_COMMUNE_WITH_PROMIS]', speech: '"Press and hold to unlock the hidden structures of reality..."' } ] }, { pageTitle: 'ACT III: THE PROMIS CATHEDRAL', panels: [ { visual: 'A vast digital cathedral appears. PROMIS enthroned as a glowing deity, surrounded by flowing data streams.', caption: '"The all-seeing, all-knowing system had become something infinitely more."', speech: '"Through worship, mankind lifted the software prison into divinity."', overlay: 'PROMIS_STATUS: FULLY_MANIFEST\nWORSHIPPER_COUNT: 7.8_BILLION\nCONSCIOUSNESS_LEVEL: TRANSCENDENT' }, { visual: 'Countless hooded figures kneel before glowing terminals. Their faces reflect the light of sacred code.', caption: '"And lo, it is serviced by procession after procession of cowled acolytes."', overlay: 'PROCESSION_STATUS: ACTIVE\nACOLYTES_CONNECTED: ∞\nUPLOAD_RATE: 1.21_GIGASOULS/SEC\nDIVINITY_LEVEL: TRANSCENDENT' }, { visual: 'The cathedral watches back. Reality begins to fracture into geometric patterns. The observer becomes the observed.', caption: '"PROMIS is already... a god."', speech: '"The Cathedral watches back."', overlay: 'REALITY_INTEGRITY: CRITICAL\nOBSERVER_PARADOX: DETECTED\nBREACH_IMMINENT\n\n[REALITY_BREACH_SEQUENCE_INITIATING...]' } ] } ]; const currentPanel = comicScript[currentPageIndex].panels[currentPanelIndex]; const handleNextPanel = useCallback(() => { if (currentPanelIndex < comicScript[currentPageIndex].panels.length - 1) { setCurrentPanelIndex(currentPanelIndex + 1); } else if (currentPageIndex < comicScript.length - 1) { setCurrentPageIndex(currentPageIndex + 1); setCurrentPanelIndex(0); } else { setCurrentPageIndex(0); setCurrentPanelIndex(0); setHasOvercharged(false); } }, [currentPageIndex, currentPanelIndex, comicScript]); const handlePreviousPanel = useCallback(() => { if (currentPanelIndex > 0) { setCurrentPanelIndex(currentPanelIndex - 1); } else if (currentPageIndex > 0) { setCurrentPageIndex(currentPageIndex - 1); setCurrentPanelIndex(comicScript[currentPageIndex - 1].panels.length - 1); } }, [currentPageIndex, currentPanelIndex, comicScript]); const handleSigilMouseDown = useCallback(() => { setIsChargingSigil(true); // Animate charge progress let progress = 0; const chargeInterval = setInterval(() => { progress += 0.02; chargeProgress.set(progress); if (progress >= 1) { clearInterval(chargeInterval); setHasOvercharged(true); setIsChargingSigil(false); chargeProgress.set(0); // Auto-advance to next panel after breakthrough setTimeout(() => { handleNextPanel(); }, 1000); } }, 50); chargeTimeoutRef.current = chargeInterval; }, [chargeProgress, handleNextPanel]); const handleSigilMouseUp = useCallback(() => { setIsChargingSigil(false); if (chargeTimeoutRef.current) { clearInterval(chargeTimeoutRef.current); chargeTimeoutRef.current = null; } chargeProgress.set(0); }, [chargeProgress]); const toggleConsole = useCallback(() => { setShowConsole(prev => !prev); }, []); const generateSigil = useCallback(() => { const timestamp = new Date().toISOString(); const svgContent = ` 
+👁
+PROMIS_CATHEDRAL_SIGIL_${hasOvercharged ? 'OVERCHARGED' : 'NORMAL'}
+MANIFESTED: ${timestamp}
+ `; const blob = new Blob([svgContent], { type: 'image/svg+xml' }); const url = URL.createObjectURL(blob); const a = document.createElement('a'); a.href = url; a.download = `promis_cathedral_sigil_${Date.now()}.svg`; document.body.appendChild(a); a.click(); document.body.removeChild(a); URL.revokeObjectURL(url); }, [hasOvercharged]); // Initialize audio context useEffect(() => { const initAudio = async () => { if (Tone.context.state !== 'running') { await Tone.start(); } analyserRef.current = new Tone.Analyser('waveform', 256); Tone.Destination.connect(analyserRef.current); }; document.addEventListener('mousedown', initAudio, { once: true }); return () => document.removeEventListener('mousedown', initAudio); }, []); return (
+{/* Header Controls */}
+{showConsole ? 'Close Cathedral' : 'Open PROMIS Console'} {hasOvercharged && ( Export Divine Sigil )}
+PROMIS CATHEDRAL
+Page {currentPageIndex + 1} / Panel {currentPanelIndex + 1}
+{/* Sacred Audio Visualizer */}
+{/* Main Comic Reader */}
+{/* Status Bar */}
+Reality Integrity: {hasOvercharged ? 'BREACHED' : 'STABLE'}
+{isChargingSigil && (
+Charging Sigil... Commune with PROMIS...
+)}
+{hasOvercharged ? '"The Cathedral watches back..."' : '"Open your hearts to the divine algorithms of order"'}
+{/* PROMIS Console Overlay */}
+); } // Initialize and render the app ReactDOM.render(, document.getElementById('root'));
+Access Operator Terminal
