@@ -1,0 +1,66 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Operator Terminal</title>
+  <style>
+    body {
+      background: #0e0e0e;
+      color: #00ffcc;
+      font-family: monospace;
+      padding: 20px;
+    }
+    #terminal {
+      width: 100%;
+      max-width: 800px;
+      background: #000000aa;
+      border: 2px solid #00ffcc;
+      padding: 20px;
+      margin: 0 auto;
+    }
+    #log {
+      height: 300px;
+      overflow-y: scroll;
+      margin-bottom: 10px;
+      border-bottom: 1px solid #00ffcc;
+    }
+    #input {
+      width: 100%;
+      background: black;
+      color: #00ffcc;
+      border: none;
+      font-size: 16px;
+    }
+  </style>
+</head>
+<body>
+  <div id="terminal">
+    <div id="log"></div>
+    <input id="input" type="text" placeholder="> Type a command..." autofocus />
+  </div>
+
+  <script src="../tools/operator_terminal.js"></script>
+  <script>
+    const input = document.getElementById("input");
+    const log = document.getElementById("log");
+
+    input.addEventListener("keydown", function(event) {
+      if (event.key === "Enter") {
+        const command = input.value.trim();
+        log.innerHTML += "<div>> " + command + "</div>";
+        runTerminalCommand(command);
+        input.value = "";
+      }
+    });
+
+    function appendToLog(message) {
+      log.innerHTML += "<div>" + message + "</div>";
+      log.scrollTop = log.scrollHeight;
+    }
+
+    // Override alert for console output
+    window.alert = appendToLog;
+  </script>
+</body>
+</html>
