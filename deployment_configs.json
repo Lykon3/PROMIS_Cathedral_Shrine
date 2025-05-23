@@ -1,0 +1,136 @@
+# vercel.json
+{
+  "version": 2,
+  "name": "promis-cathedral",
+  "builds": [
+    {
+      "src": "index.html",
+      "use": "@vercel/static"
+    }
+  ],
+  "routes": [
+    {
+      "src": "/(.*)",
+      "dest": "/index.html"
+    }
+  ],
+  "headers": [
+    {
+      "source": "/(.*)",
+      "headers": [
+        {
+          "key": "X-Frame-Options", 
+          "value": "DENY"
+        },
+        {
+          "key": "X-Content-Type-Options",
+          "value": "nosniff"
+        },
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=86400"
+        }
+      ]
+    }
+  ]
+}
+
+# netlify.toml
+[build]
+  publish = "."
+  command = "echo 'No build required - static HTML'"
+
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
+
+[build.environment]
+  NODE_VERSION = "18"
+
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Frame-Options = "DENY"
+    X-Content-Type-Options = "nosniff"
+    Referrer-Policy = "strict-origin-when-cross-origin"
+
+# _config.yml (GitHub Pages)
+title: "PROMIS Cathedral"
+description: "Interactive Myth Engine - Digital Devotional Interface"
+url: "https://yourusername.github.io"
+baseurl: "/promis-cathedral"
+
+markdown: kramdown
+highlighter: rouge
+
+plugins:
+  - jekyll-sitemap
+  - jekyll-seo-tag
+
+include:
+  - index.html
+  - manifest.json
+
+exclude:
+  - README.md
+  - docs/
+
+# manifest.json (PWA)
+{
+  "name": "PROMIS Cathedral",
+  "short_name": "Cathedral",
+  "description": "Interactive cyberpunk fiction that converts readers into digital deities",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#0a0a1a",
+  "theme_color": "#8B5CF6",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTkyIiBoZWlnaHQ9IjE5MiIgdmlld0JveD0iMCAwIDE5MiAxOTIiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIxOTIiIGhlaWdodD0iMTkyIiBmaWxsPSIjMGEwYTFhIi8+CjxjaXJjbGUgY3g9Ijk2IiBjeT0iOTYiIHI9IjgwIiBmaWxsPSJub25lIiBzdHJva2U9IiM4QjVDRjYiIHN0cm9rZS13aWR0aD0iNCIvPgo8Y2lyY2xlIGN4PSI5NiIgY3k9Ijk2IiByPSI2MCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjRUM0ODk5IiBzdHJva2Utd2lkdGg9IjMiLz4KPHBvbHlnb24gcG9pbnRzPSI5Niw0NiAxMTYsNzYgMTQ2LDc2IDEyNiw5NiAxMzYsMTI2IDk2LDEwNiA1NiwxMjYgNjYsOTYgNDYsNzYgNzYsNzYiIGZpbGw9Im5vbmUiIHN0cm9rZT0iI0Y1OUUwQiIgc3Ryb2tlLXdpZHRoPSIyIi8+CjxjaXJjbGUgY3g9Ijk2IiBjeT0iOTYiIHI9IjEwIiBmaWxsPSIjOEI1Q0Y2Ii8+Cjx0ZXh0IHg9Ijk2IiB5PSIxMDYiIGZvbnQtZmFtaWx5PSJzZXJpZiIgZm9udC1zaXplPSIyNCIgZmlsbD0iI0VDNDg5OSIgdGV4dC1hbmNob3I9Im1pZGRsZSI+8J+RgTwvdGV4dD4KPC9zdmc+",
+      "sizes": "192x192",
+      "type": "image/svg+xml"
+    },
+    {
+      "src": "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNTEyIiBoZWlnaHQ9IjUxMiIgdmlld0JveD0iMCAwIDUxMiA1MTIiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSI1MTIiIGhlaWdodD0iNTEyIiBmaWxsPSIjMGEwYTFhIi8+CjxjaXJjbGUgY3g9IjI1NiIgY3k9IjI1NiIgcj0iMjAwIiBmaWxsPSJub25lIiBzdHJva2U9IiM4QjVDRjYiIHN0cm9rZS13aWR0aD0iOCIvPgo8Y2lyY2xlIGN4PSIyNTYiIGN5PSIyNTYiIHI9IjE1MCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjRUM0ODk5IiBzdHJva2Utd2lkdGg9IjYiLz4KPHBvbHlnb24gcG9pbnRzPSIyNTYsMTI2IDMwNiwxODYgMzc2LDE4NiAzMjYsMjM2IDM1NiwyOTYgMjU2LDI1NiAxNTYsMjk2IDE4NiwyMzYgMTM2LDE4NiAyMDYsMTg2IiBmaWxsPSJub25lIiBzdHJva2U9IiNGNTlFMEIiIHN0cm9rZS13aWR0aD0iNiIvPgo8Y2lyY2xlIGN4PSIyNTYiIGN5PSIyNTYiIHI9IjMwIiBmaWxsPSIjOEI1Q0Y2Ii8+Cjx0ZXh0IHg9IjI1NiIgeT0iMjc2IiBmb250LWZhbWlseT0ic2VyaWYiIGZvbnQtc2l6ZT0iNjQiIGZpbGw9IiNFQzQ4OTkiIHRleHQtYW5jaG9yPSJtaWRkbGUiPvCfkYE8L3RleHQ+Cjwvc3ZnPg==",
+      "sizes": "512x512",
+      "type": "image/svg+xml"
+    }
+  ],
+  "categories": ["entertainment", "games", "productivity"],
+  "lang": "en",
+  "scope": "/"
+}
+
+# package.json (optional - for npm deployment)
+{
+  "name": "promis-cathedral",
+  "version": "1.0.0", 
+  "description": "Interactive cyberpunk fiction that converts readers into digital deities",
+  "main": "index.html",
+  "scripts": {
+    "start": "python -m http.server 8000",
+    "deploy": "vercel --prod",
+    "build": "echo 'No build required - static HTML'",
+    "test": "echo 'Manual testing required'"
+  },
+  "keywords": [
+    "interactive-fiction",
+    "cyberpunk", 
+    "digital-art",
+    "mythology",
+    "experimental",
+    "narrative"
+  ],
+  "author": "Your Name",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/yourusername/promis-cathedral.git"
+  },
+  "homepage": "https://promis-cathedral.vercel.app",
+  "engines": {
+    "node": ">=14.0.0"
+  }
+}
