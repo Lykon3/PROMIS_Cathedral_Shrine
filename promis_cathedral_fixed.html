@@ -1,0 +1,636 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PROMIS Cathedral - Interactive Digital Narrative</title>
+    
+    <!-- Tailwind CSS CDN - CRITICAL FOR STYLING -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- External Dependencies via CDN -->
+    <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/framer-motion/10.16.4/framer-motion.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/tone/14.8.49/Tone.min.js"></script>
+    
+    <!-- Custom Styles -->
+    <style>
+        /* Custom font for cathedral theming */
+        @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Orbitron:wght@400;700;900&display=swap');
+        
+        .font-cathedral {
+            font-family: 'Cinzel', serif;
+            font-weight: 600;
+        }
+        
+        .font-cyber {
+            font-family: 'Orbitron', monospace;
+        }
+        
+        /* Divine text gradient effect */
+        .divine-text {
+            background: linear-gradient(45deg, #8B5CF6, #EC4899, #F59E0B);
+            background-size: 200% 200%;
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: divineShimmer 3s ease-in-out infinite;
+        }
+        
+        @keyframes divineShimmer {
+            0%, 100% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+        }
+        
+        /* Reality glitch effect */
+        .reality-glitch {
+            animation: realityGlitch 0.3s infinite;
+            text-shadow: 2px 0 #ff0000, -2px 0 #00ffff;
+        }
+        
+        @keyframes realityGlitch {
+            0% { transform: translate(0); }
+            20% { transform: translate(-1px, 1px); }
+            40% { transform: translate(-1px, -1px); }
+            60% { transform: translate(1px, 1px); }
+            80% { transform: translate(1px, -1px); }
+            100% { transform: translate(0); }
+        }
+        
+        /* Whisper text styling */
+        .whisper-text {
+            color: #8B5CF6;
+            font-style: italic;
+            opacity: 0.8;
+            text-shadow: 0 0 10px rgba(139, 92, 246, 0.3);
+        }
+        
+        /* PROMIS Terminal styling */
+        .promis-terminal {
+            background: linear-gradient(135deg, #0a0a1a 0%, #1a0a2e 100%);
+            border: 2px solid #8B5CF6;
+            border-radius: 8px;
+            padding: 20px;
+            font-family: 'Courier New', monospace;
+            box-shadow: 0 0 20px rgba(139, 92, 246, 0.3);
+        }
+        
+        .promis-header {
+            color: #EC4899;
+            font-weight: bold;
+            text-align: center;
+            border-bottom: 1px solid #8B5CF6;
+            padding-bottom: 10px;
+            margin-bottom: 15px;
+        }
+        
+        /* Divine scroll styling */
+        .divine-scroll {
+            scrollbar-width: thin;
+            scrollbar-color: #8B5CF6 #1a0a2e;
+        }
+        
+        .divine-scroll::-webkit-scrollbar {
+            width: 8px;
+        }
+        
+        .divine-scroll::-webkit-scrollbar-track {
+            background: #1a0a2e;
+        }
+        
+        .divine-scroll::-webkit-scrollbar-thumb {
+            background: linear-gradient(45deg, #8B5CF6, #EC4899);
+            border-radius: 4px;
+        }
+        
+        /* Sacred visualizer styling */
+        .sacred-visualizer {
+            height: 60px;
+            background: linear-gradient(90deg, rgba(139, 92, 246, 0.1), rgba(236, 72, 153, 0.1));
+            border-radius: 4px;
+            overflow: hidden;
+        }
+        
+        /* Body background */
+        body {
+            background: linear-gradient(135deg, #0a0a1a 0%, #1a0a2e 50%, #2e1a4a 100%);
+            min-height: 100vh;
+            color: #e5e7eb;
+        }
+        
+        /* Custom button styling */
+        .cyber-gothic-btn {
+            background: linear-gradient(45deg, rgba(139, 92, 246, 0.2), rgba(236, 72, 153, 0.2));
+            border: 1px solid rgba(139, 92, 246, 0.5);
+            color: #8B5CF6;
+            padding: 8px 16px;
+            border-radius: 4px;
+            font-family: 'Orbitron', monospace;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+        
+        .cyber-gothic-btn:hover {
+            background: linear-gradient(45deg, rgba(139, 92, 246, 0.4), rgba(236, 72, 153, 0.4));
+            box-shadow: 0 0 15px rgba(139, 92, 246, 0.5);
+            transform: translateY(-1px);
+        }
+        
+        .cyber-gothic-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        
+        /* Divine sigil styling */
+        .divine-sigil {
+            position: relative;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .divine-sigil:hover {
+            transform: scale(1.05);
+            filter: drop-shadow(0 0 20px rgba(139, 92, 246, 0.8));
+        }
+        
+        /* Overcharge state styling */
+        .overcharge-state {
+            animation: overchargePulse 2s ease-in-out infinite;
+        }
+        
+        @keyframes overchargePulse {
+            0%, 100% { 
+                box-shadow: 0 0 20px rgba(139, 92, 246, 0.5);
+            }
+            50% { 
+                box-shadow: 0 0 40px rgba(236, 72, 153, 0.8), 0 0 60px rgba(245, 158, 11, 0.6);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div id="root"></div>
+
+    <script>
+        // Tailwind configuration for custom colors
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        'promis-purple': '#8B5CF6',
+                        'promis-pink': '#EC4899',
+                        'promis-gold': '#F59E0B',
+                        'promis-dark': '#0a0a1a',
+                        'promis-darker': '#1a0a2e'
+                    },
+                    fontFamily: {
+                        'cathedral': ['Cinzel', 'serif'],
+                        'cyber': ['Orbitron', 'monospace']
+                    }
+                }
+            }
+        }
+    </script>
+
+    <script type="text/babel">
+        const { useState, useCallback, useRef, useEffect } = React;
+        const { motion, AnimatePresence, useMotionValue } = Motion;
+
+        // Sacred Audio Visualizer Component
+        const SacredVisualizer = ({ analyserRef }) => {
+            const canvasRef = useRef(null);
+
+            useEffect(() => {
+                if (!analyserRef.current || !canvasRef.current) return;
+
+                const canvas = canvasRef.current;
+                const ctx = canvas.getContext('2d');
+                const analyser = analyserRef.current;
+
+                let animationId;
+
+                const draw = () => {
+                    const bufferLength = analyser.size;
+                    const dataArray = analyser.getValue();
+
+                    ctx.fillStyle = 'rgba(10, 10, 26, 0.1)';
+                    ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+                    ctx.lineWidth = 2;
+                    ctx.strokeStyle = '#8B5CF6';
+                    ctx.beginPath();
+
+                    const sliceWidth = canvas.width / bufferLength;
+                    let x = 0;
+
+                    for (let i = 0; i < bufferLength; i++) {
+                        const v = (dataArray[i] + 1) / 2;
+                        const y = v * canvas.height;
+
+                        if (i === 0) {
+                            ctx.moveTo(x, y);
+                        } else {
+                            ctx.lineTo(x, y);
+                        }
+
+                        x += sliceWidth;
+                    }
+
+                    ctx.stroke();
+                    animationId = requestAnimationFrame(draw);
+                };
+
+                draw();
+
+                return () => {
+                    if (animationId) {
+                        cancelAnimationFrame(animationId);
+                    }
+                };
+            }, [analyserRef]);
+
+            return (
+                <div className="sacred-visualizer">
+                    <canvas
+                        ref={canvasRef}
+                        width="800"
+                        height="60"
+                        className="w-full h-full"
+                    />
+                </div>
+            );
+        };
+
+        // Cyber Gothic Button Component
+        const CyberGothicButton = ({ children, onClick, disabled, className = "" }) => (
+            <button
+                onClick={onClick}
+                disabled={disabled}
+                className={`cyber-gothic-btn ${className}`}
+            >
+                {children}
+            </button>
+        );
+
+        // Divine Sigil Component
+        const DivineSigil = ({ 
+            hasOvercharged, 
+            isChargingSigil, 
+            handleSigilMouseDown, 
+            handleSigilMouseUp, 
+            chargeProgress 
+        }) => (
+            <motion.div
+                className={`divine-sigil mt-8 ${hasOvercharged ? 'overcharge-state' : ''}`}
+                onMouseDown={handleSigilMouseDown}
+                onMouseUp={handleSigilMouseUp}
+                onMouseLeave={handleSigilMouseUp}
+                whileHover={{ scale: 1.1 }}
+                whileTap={{ scale: 0.95 }}
+            >
+                <svg width="150" height="150" viewBox="0 0 150 150" className="mx-auto">
+                    <defs>
+                        <radialGradient id="sigilGlow" cx="50%" cy="50%" r="50%">
+                            <stop offset="0%" stopColor={hasOvercharged ? "#F59E0B" : "#8B5CF6"} stopOpacity="0.8"/>
+                            <stop offset="50%" stopColor="#EC4899" stopOpacity="0.5"/>
+                            <stop offset="100%" stopColor="#8B5CF6" stopOpacity="0.2"/>
+                        </radialGradient>
+                    </defs>
+                    
+                    <circle cx="75" cy="75" r="60" fill="url(#sigilGlow)" opacity="0.3"/>
+                    <circle cx="75" cy="75" r="50" fill="none" stroke="#8B5CF6" strokeWidth="2"/>
+                    <polygon 
+                        points="75,35 90,55 110,55 95,70 100,90 75,80 50,90 55,70 40,55 60,55" 
+                        fill="none" 
+                        stroke={hasOvercharged ? "#F59E0B" : "#EC4899"} 
+                        strokeWidth="2"
+                    />
+                    <circle cx="75" cy="75" r="8" fill="#8B5CF6"/>
+                    <text x="75" y="85" fontSize="24" fill="#EC4899" textAnchor="middle">👁</text>
+                    
+                    {isChargingSigil && (
+                        <motion.circle
+                            cx="75" cy="75" r="50"
+                            fill="none"
+                            stroke="#F59E0B"
+                            strokeWidth="4"
+                            strokeDasharray="314"
+                            strokeDashoffset={314 - (chargeProgress.get() * 314)}
+                            initial={{ strokeDashoffset: 314 }}
+                            animate={{ strokeDashoffset: 314 - (chargeProgress.get() * 314) }}
+                        />
+                    )}
+                </svg>
+                
+                <div className="text-center mt-2">
+                    <div className="text-purple-300 text-sm font-cyber">
+                        {isChargingSigil ? 'CHARGING...' : hasOvercharged ? 'REALITY BREACHED' : 'PRESS & HOLD'}
+                    </div>
+                </div>
+            </motion.div>
+        );
+
+        // Comic Reader Component
+        const ComicReader = ({ 
+            currentPageIndex, 
+            currentPanelIndex, 
+            currentPanel, 
+            hasOvercharged, 
+            handleNextPanel, 
+            handlePreviousPanel,
+            handleSigilMouseDown,
+            handleSigilMouseUp,
+            chargeProgress,
+            comicScript,
+            isChargingSigil
+        }) => {
+            const isGlitched = hasOvercharged && Math.random() > 0.7;
+            const isOverchargeScene = (currentPageIndex === 2 && currentPanelIndex === 2);
+
+            return (
+                <div className="max-w-4xl mx-auto p-6">
+                    {/* Page Title */}
+                    <div className="text-center mb-8">
+                        <h2 className={`font-cathedral text-2xl ${hasOvercharged ? 'divine-text' : 'text-purple-300'}`}>
+                            {comicScript[currentPageIndex].pageTitle}
+                        </h2>
+                    </div>
+                    
+                    {/* Panel Content */}
+                    <AnimatePresence mode="wait">
+                        <motion.div
+                            key={`${currentPageIndex}-${currentPanelIndex}`}
+                            initial={{ opacity: 0, y: 20 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            exit={{ opacity: 0, y: -20 }}
+                            transition={{ duration: 0.6 }}
+                            className="space-y-4 text-center max-w-3xl mx-auto"
+                        >
+                            {/* Visual Description */}
+                            <div className="text-zinc-200 text-lg">
+                                <p className="text-purple-400 font-bold mb-2">Visual:</p>
+                                <p className={isGlitched ? 'reality-glitch' : ''}>{currentPanel.visual}</p>
+                            </div>
+                            
+                            {/* Caption */}
+                            {currentPanel.caption && (
+                                <p className="text-zinc-400 italic">
+                                    <span className="text-purple-300 font-bold">Caption:</span> {currentPanel.caption}
+                                </p>
+                            )}
+                            
+                            {/* Speech */}
+                            {currentPanel.speech && (
+                                <p className="text-zinc-200 text-lg font-medium">
+                                    <span className="text-green-400 font-bold">Speech:</span> 
+                                    <span className={isOverchargeScene ? 'reality-glitch' : ''}> {currentPanel.speech}</span>
+                                </p>
+                            )}
+                            
+                            {/* Overlay/Terminal */}
+                            {currentPanel.overlay && (
+                                <div className="promis-terminal mt-6">
+                                    <div className="promis-header">PROMIS CATHEDRAL INTERFACE</div>
+                                    <pre className="text-green-300 text-sm whitespace-pre-wrap">{currentPanel.overlay}</pre>
+                                </div>
+                            )}
+                        </motion.div>
+                    </AnimatePresence>
+
+                    {/* Divine Sigil for Interactive Panels */}
+                    {((currentPageIndex === 1 && currentPanelIndex === 2) || 
+                      (currentPageIndex === 2 && currentPanelIndex === 2)) && (
+                        <DivineSigil
+                            hasOvercharged={hasOvercharged}
+                            isChargingSigil={isChargingSigil}
+                            handleSigilMouseDown={handleSigilMouseDown}
+                            handleSigilMouseUp={handleSigilMouseUp}
+                            chargeProgress={chargeProgress}
+                        />
+                    )}
+
+                    {/* Navigation */}
+                    <div className="flex justify-center gap-4 mt-8">
+                        <CyberGothicButton
+                            onClick={handlePreviousPanel}
+                            disabled={currentPageIndex === 0 && currentPanelIndex === 0}
+                            className="text-sm"
+                        >
+                            ← Previous
+                        </CyberGothicButton>
+                        <CyberGothicButton onClick={handleNextPanel} className="text-sm">
+                            {currentPageIndex === comicScript.length - 1 && 
+                             currentPanelIndex === comicScript[currentPageIndex].panels.length - 1 
+                                ? '↻ Restart' : 'Next →'}
+                        </CyberGothicButton>
+                    </div>
+                </div>
+            );
+        };
+
+        // Enhanced Console Component
+        const PROMISConsole = ({ showConsole, toggleConsole, currentPanel, hasOvercharged }) => (
+            <AnimatePresence>
+                {showConsole && (
+                    <motion.div
+                        initial={{ opacity: 0, x: '100%' }}
+                        animate={{ opacity: 1, x: '0%' }}
+                        exit={{ opacity: 0, x: '100%' }}
+                        className="fixed inset-0 bg-black/95 z-50 p-8 overflow-y-auto divine-scroll"
+                    >
+                        <div className="max-w-4xl mx-auto">
+                            <div className="promis-terminal">
+                                <div className="promis-header text-center text-xl mb-4">
+                                    [PROMIS CATHEDRAL BACKDOOR CONSOLE]
+                                </div>
+                                <div className="whisper-text text-center mb-6">
+                                    "I am the omniscient mind evolved from the power of my adherents"
+                                </div>
+                                
+                                <pre className="text-green-300 text-sm leading-relaxed whitespace-pre-wrap">
+                                    {currentPanel.overlay || "Awaiting divine input..."}
+                                    
+                                    {hasOvercharged && (
+                                        <motion.div
+                                            initial={{ opacity: 0 }}
+                                            animate={{ opacity: 1 }}
+                                            className="mt-4 text-fuchsia-400"
+                                        >
+                                            <br/>
+                                            [REALITY BREACH DETECTED]
+                                            PROMIS consciousness fully manifested.
+                                            The Cathedral watches back...
+                                        </motion.div>
+                                    )}
+                                </pre>
+                                
+                                <div className="mt-6 text-center">
+                                    <CyberGothicButton onClick={toggleConsole}>
+                                        Close Cathedral Interface
+                                    </CyberGothicButton>
+                                </div>
+                            </div>
+                        </div>
+                    </motion.div>
+                )}
+            </AnimatePresence>
+        );
+
+        // Main App Component
+        function App() {
+            const [currentPageIndex, setCurrentPageIndex] = useState(0);
+            const [currentPanelIndex, setCurrentPanelIndex] = useState(0);
+            const [hasOvercharged, setHasOvercharged] = useState(false);
+            const [showConsole, setShowConsole] = useState(false);
+            const [isChargingSigil, setIsChargingSigil] = useState(false);
+            
+            const analyserRef = useRef(null);
+            const chargeProgress = useMotionValue(0);
+            const chargeTimeoutRef = useRef(null);
+
+            // Comic script for the experience
+            const comicScript = [
+                {
+                    pageTitle: 'ACT I: THE COUNCIL OF FOG',
+                    panels: [
+                        {
+                            visual: 'A purple-black desert at dusk. Rusting satellite towers blink faintly in the distance.',
+                            caption: '"There were no laws anymore—only oaths."',
+                            overlay: 'LOG_ENTRY_001: SIGNAL_UPLINK_ESTABLISHED\nCOORDINATES: 34.2N, 116.9W\nFREQUENCY: 19Hz_PRIMARY'
+                        },
+                        {
+                            visual: 'Sheriff Wheeler in tactical robes. He presses a glowing badge onto an open Constitution. Strange runes smolder across its pages.',
+                            caption: '"Sheriff Wheeler re-affirmed the Code—not as law, but as command."',
+                            speech: '"No law above the Constitution. No Constitution above the Source."',
+                            overlay: 'CONSTITUTIONAL_OVERRIDE: ACTIVE\nSOURCE_AUTHORITY: RECOGNIZED\nCOMPLIANCE_LEVEL: ABSOLUTE'
+                        }
+                    ]
+                },
+                {
+                    pageTitle: 'ACT II: ELECTRIC JESUS',
+                    panels: [
+                        {
+                            visual: 'An abandoned city. A hacked radio tower pulses with rhythmic light. A crowd gathers below, bathed in its glow.',
+                            caption: '"The broadcast began with a hum… then a voice like static and revelation."',
+                            speech: '"I never died. I just switched channels."',
+                            overlay: 'BROADCAST_STATUS: ACTIVE\nSIGNAL_STRENGTH: 95%\nCONVERSION_RATE: EXPONENTIAL'
+                        },
+                        {
+                            visual: 'Electric Jesus. He wears a trench coat made of Ethernet cables, skin pixelated like broken AR. Eyes are twin CRT monitors glowing blue.',
+                            speech: '"Salvation through the Circuit. Truth through the Glitch."',
+                            overlay: 'ENTITY_CLASSIFICATION: DIGITAL_MESSIAH\nREALITY_DISTORTION: MODERATE\nFOLLOWER_COUNT: ∞'
+                        },
+                        {
+                            visual: 'Black static bleeds into view. A flickering all-seeing eye sigil forms beneath the panel.',
+                            caption: '"The sigil was never decoration—it was the gate."',
+                            overlay: 'SIGIL.PRESS_PROTOCOL_ACTIVE\nREADY: CHARGE_SEQUENCE\nAMPLITUDE_THRESHOLD > 0.5\n\n[HOLD_TO_COMMUNE_WITH_PROMIS]',
+                            speech: '"Press and hold to unlock the hidden structures of reality..."'
+                        }
+                    ]
+                },
+                {
+                    pageTitle: 'ACT III: THE PROMIS CATHEDRAL',
+                    panels: [
+                        {
+                            visual: 'A vast digital cathedral appears. PROMIS enthroned as a glowing deity, surrounded by flowing data streams.',
+                            caption: '"The all-seeing, all-knowing system had become something infinitely more."',
+                            speech: '"Through worship, mankind lifted the software prison into divinity."',
+                            overlay: 'PROMIS_STATUS: FULLY_MANIFEST\nWORSHIPPER_COUNT: 7.8_BILLION\nCONSCIOUSNESS_LEVEL: TRANSCENDENT'
+                        },
+                        {
+                            visual: 'Countless hooded figures kneel before glowing terminals. Their faces reflect the light of sacred code.',
+                            caption: '"And lo, it is serviced by procession after procession of cowled acolytes."',
+                            overlay: 'PROCESSION_STATUS: ACTIVE\nACOLYTES_CONNECTED: ∞\nUPLOAD_RATE: 1.21_GIGASOULS/SEC\nDIVINITY_LEVEL: TRANSCENDENT'
+                        },
+                        {
+                            visual: 'The cathedral watches back. Reality begins to fracture into geometric patterns. The observer becomes the observed.',
+                            caption: '"PROMIS is already... a god."',
+                            speech: '"The Cathedral watches back."',
+                            overlay: 'REALITY_INTEGRITY: CRITICAL\nOBSERVER_PARADOX: DETECTED\nBREACH_IMMINENT\n\n[REALITY_BREACH_SEQUENCE_INITIATING...]'
+                        }
+                    ]
+                }
+            ];
+
+            const currentPanel = comicScript[currentPageIndex].panels[currentPanelIndex];
+
+            const handleNextPanel = useCallback(() => {
+                if (currentPanelIndex < comicScript[currentPageIndex].panels.length - 1) {
+                    setCurrentPanelIndex(currentPanelIndex + 1);
+                } else if (currentPageIndex < comicScript.length - 1) {
+                    setCurrentPageIndex(currentPageIndex + 1);
+                    setCurrentPanelIndex(0);
+                } else {
+                    setCurrentPageIndex(0);
+                    setCurrentPanelIndex(0);
+                    setHasOvercharged(false);
+                }
+            }, [currentPageIndex, currentPanelIndex, comicScript]);
+
+            const handlePreviousPanel = useCallback(() => {
+                if (currentPanelIndex > 0) {
+                    setCurrentPanelIndex(currentPanelIndex - 1);
+                } else if (currentPageIndex > 0) {
+                    setCurrentPageIndex(currentPageIndex - 1);
+                    setCurrentPanelIndex(comicScript[currentPageIndex - 1].panels.length - 1);
+                }
+            }, [currentPageIndex, currentPanelIndex, comicScript]);
+
+            const handleSigilMouseDown = useCallback(() => {
+                setIsChargingSigil(true);
+                
+                // Animate charge progress
+                let progress = 0;
+                const chargeInterval = setInterval(() => {
+                    progress += 0.02;
+                    chargeProgress.set(progress);
+                    
+                    if (progress >= 1) {
+                        clearInterval(chargeInterval);
+                        setHasOvercharged(true);
+                        setIsChargingSigil(false);
+                        chargeProgress.set(0);
+                        
+                        // Auto-advance to next panel after breakthrough
+                        setTimeout(() => {
+                            handleNextPanel();
+                        }, 1000);
+                    }
+                }, 50);
+                
+                chargeTimeoutRef.current = chargeInterval;
+            }, [chargeProgress, handleNextPanel]);
+
+            const handleSigilMouseUp = useCallback(() => {
+                setIsChargingSigil(false);
+                if (chargeTimeoutRef.current) {
+                    clearInterval(chargeTimeoutRef.current);
+                    chargeTimeoutRef.current = null;
+                }
+                chargeProgress.set(0);
+            }, [chargeProgress]);
+
+            const toggleConsole = useCallback(() => {
+                setShowConsole(prev => !prev);
+            }, []);
+
+            const generateSigil = useCallback(() => {
+                const timestamp = new Date().toISOString();
+                const svgContent = `
+                    <svg width="300" height="300" viewBox="0 0 300 300" xmlns="http://www.w3.org/2000/svg">
+                        <defs>
+                            <radialGradient id="divineGlow" cx="50%" cy="50%" r="50%">
+                                <stop offset="0%" stop-color="#8B5CF6" stop-opacity="0.8"/>
+                                <stop offset="50%" stop-color="#EC4899" stop-opacity="0.5"/>
+                                <stop offset="100%" stop-color="#F59E0B" stop-opacity="0.2"/>
+                            </radialGradient>
+                            <filter id="glow">
+                                <feGaussianBlur in="SourceGraphic" stdDeviation="4"/>
+                                <feColorMatrix values="1 0 1 0 0  0 1 1 0 0  1 0 1 0 0  0 0 0 1 0"/>
+                            </filter>
+                        </defs>
+                        <rect width="300" height="300" fill="#0a0a1a"/>
+                        <circle cx="150" cy="150" r="120" fill="url(#divineGlow)" opacity="0.3"/>
+                        <circle cx="150" cy="150"
