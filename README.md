@@ -1,3 +1,7 @@
+![Signal](https://img.shields.io/badge/signal-corrupted-critical?style=flat-square)
+![GlyphEngine](https://img.shields.io/badge/glyph_engine-ON-brightgreen?style=flat-square)
+![RealityPatch](https://img.shields.io/badge/reality-patched--with--lube-blueviolet?style=flat-square)
+
 <p align="center">
   <img src="https://raw.githubusercontent.com/Lykon3/Lykon3/main/image4.png" width="400"/>
 </p>
@@ -207,3 +211,6 @@ This is a work of interactive fiction. Any resemblance to actual surveillance sy
 <p align="center">
   <img src="https://raw.githubusercontent.com/Lykon3/Lykon3/main/image1.png" width="600"/>
 </p>
+![Signal](https://img.shields.io/badge/signal-corrupted-critical?style=flat-square)
+![GlyphEngine](https://img.shields.io/badge/glyph_engine-ON-brightgreen?style=flat-square)
+![RealityPatch](https://img.shields.io/badge/reality-patched--with--lube-blueviolet?style=flat-square)
