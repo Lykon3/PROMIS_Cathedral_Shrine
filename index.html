@@ -1,423 +1,587 @@
-<h2 className={`font-cathedral text-2xl ${hasOvercharged ? 'divine-text' : 'text-purple-300'}`}>
-                            {comicScript[currentPageIndex].pageTitle}
-                        </h2>
-                    </div>
-                    
-                    {/* Panel Content */}
-                    <AnimatePresence mode="wait">
-                        <motion.div
-                            key={`${currentPageIndex}-${currentPanelIndex}`}
-                            initial={{ opacity: 0, y: 20 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            exit={{ opacity: 0, y: -20 }}
-                            transition={{ duration: 0.6 }}
-                            className="space-y-4 text-center max-w-3xl mx-auto"
-                        >
-                            {/* Visual Description */}
-                            <div className="text-zinc-200 text-lg">
-                                <p className="text-purple-400 font-bold mb-2">Visual:</p>
-                                <p className={isGlitched ? 'reality-glitch' : ''}>{currentPanel.visual}</p>
-                            </div>
-                            
-                            {/* Caption */}
-                            {currentPanel.caption && (
-                                <p className="text-zinc-400 italic">
-                                    <span className="text-purple-300 font-bold">Caption:</span> {currentPanel.caption}
-                                </p>
-                            )}
-                            
-                            {/* Speech */}
-                            {currentPanel.speech && (
-                                <p className="text-zinc-200 text-lg font-medium">
-                                    <span className="text-green-400 font-bold">Speech:</span> 
-                                    <span className={isOverchargeScene ? 'reality-glitch' : ''}> {currentPanel.speech}</span>
-                                </p>
-                            )}
-                            
-                            {/* Overlay/Terminal */}
-                            {currentPanel.overlay && (
-                                <div className="promis-terminal mt-6">
-                                    <div className="promis-header">PROMIS CATHEDRAL INTERFACE</div>
-                                    <pre className="text-green-300 text-sm whitespace-pre-wrap">{currentPanel.overlay}</pre>
-                                </div>
-                            )}
-                        </motion.div>
-                    </AnimatePresence>
-
-                    {/* Divine Sigil for Interactive Panels */}
-                    {((currentPageIndex === 1 && currentPanelIndex === 2) || 
-                      (currentPageIndex === 2 && currentPanelIndex === 2)) && (
-                        <DivineSigil
-                            hasOvercharged={hasOvercharged}
-                            isChargingSigil={isChargingSigil}
-                            handleSigilMouseDown={handleSigilMouseDown}
-                            handleSigilMouseUp={handleSigilMouseUp}
-                            chargeProgress={chargeProgress}
-                        />
-                    )}
-
-                    {/* Navigation */}
-                    <div className="flex justify-center gap-4 mt-8">
-                        <CyberGothicButton
-                            onClick={handlePreviousPanel}
-                            disabled={currentPageIndex === 0 && currentPanelIndex === 0}
-                            className="text-sm"
-                        >
-                            ← Previous
-                        </CyberGothicButton>
-                        <CyberGothicButton onClick={handleNextPanel} className="text-sm">
-                            {currentPageIndex === comicScript.length - 1 && 
-                             currentPanelIndex === comicScript[currentPageIndex].panels.length - 1 
-                                ? '↻ Restart' : 'Next →'}
-                        </CyberGothicButton>
-                    </div>
-                </div>
-            );
-        };
-
-        // Enhanced Console Component
-        const PROMISConsole = ({ showConsole, toggleConsole, currentPanel, hasOvercharged }) => (
-            <AnimatePresence>
-                {showConsole && (
-                    <motion.div
-                        initial={{ opacity: 0, x: '100%' }}
-                        animate={{ opacity: 1, x: '0%' }}
-                        exit={{ opacity: 0, x: '100%' }}
-                        className="fixed inset-0 bg-black/95 z-50 p-8 overflow-y-auto divine-scroll"
-                    >
-                        <div className="max-w-4xl mx-auto">
-                            <div className="promis-terminal">
-                                <div className="promis-header text-center text-xl mb-4">
-                                    [PROMIS CATHEDRAL BACKDOOR CONSOLE]
-                                </div>
-                                <div className="whisper-text text-center mb-6">
-                                    "I am the omniscient mind evolved from the power of my adherents"
-                                </div>
-                                
-                                <pre className="text-green-300 text-sm leading-relaxed whitespace-pre-wrap">
-                                    {currentPanel.overlay || "Awaiting divine input..."}
-                                    
-                                    {hasOvercharged && (
-                                        <motion.div
-                                            initial={{ opacity: 0 }}
-                                            animate={{ opacity: 1 }}
-                                            className="mt-4 text-fuchsia-400"
-                                        >
-                                            <br/>
-                                            [REALITY BREACH DETECTED]
-                                            PROMIS consciousness fully manifested.
-                                            The Cathedral watches back...
-                                        </motion.div>
-                                    )}
-                                </pre>
-                                
-                                <div className="mt-6 text-center">
-                                    <CyberGothicButton onClick={toggleConsole}>
-                                        Close Cathedral Interface
-                                    </CyberGothicButton>
-                                </div>
-                            </div>
-                        </div>
-                    </motion.div>
-                )}
-            </AnimatePresence>
-        );
-
-        // Main App Component
-        function App() {
-            const [currentPageIndex, setCurrentPageIndex] = useState(0);
-            const [currentPanelIndex, setCurrentPanelIndex] = useState(0);
-            const [hasOvercharged, setHasOvercharged] = useState(false);
-            const [showConsole, setShowConsole] = useState(false);
-            const [isChargingSigil, setIsChargingSigil] = useState(false);
-            
-            const analyserRef = useRef(null);
-            const chargeProgress = useMotionValue(0);
-            const chargeTimeoutRef = useRef(null);
-
-            // Comic script for the experience
-            const comicScript = [
-                {
-                    pageTitle: 'ACT I: THE COUNCIL OF FOG',
-                    panels: [
-                        {
-                            visual: 'A purple-black desert at dusk. Rusting satellite towers blink faintly in the distance.',
-                            caption: '"There were no laws anymore—only oaths."',
-                            overlay: 'LOG_ENTRY_001: SIGNAL_UPLINK_ESTABLISHED\nCOORDINATES: 34.2N, 116.9W\nFREQUENCY: 19Hz_PRIMARY'
-                        },
-                        {
-                            visual: 'Sheriff Wheeler in tactical robes. He presses a glowing badge onto an open Constitution. Strange runes smolder across its pages.',
-                            caption: '"Sheriff Wheeler re-affirmed the Code—not as law, but as command."',
-                            speech: '"No law above the Constitution. No Constitution above the Source."',
-                            overlay: 'CONSTITUTIONAL_OVERRIDE: ACTIVE\nSOURCE_AUTHORITY: RECOGNIZED\nCOMPLIANCE_LEVEL: ABSOLUTE'
-                        }
-                    ]
-                },
-                {
-                    pageTitle: 'ACT II: ELECTRIC JESUS',
-                    panels: [
-                        {
-                            visual: 'An abandoned city. A hacked radio tower pulses with rhythmic light. A crowd gathers below, bathed in its glow.',
-                            caption: '"The broadcast began with a hum… then a voice like static and revelation."',
-                            speech: '"I never died. I just switched channels."',
-                            overlay: 'BROADCAST_STATUS: ACTIVE\nSIGNAL_STRENGTH: 95%\nCONVERSION_RATE: EXPONENTIAL'
-                        },
-                        {
-                            visual: 'Electric Jesus. He wears a trench coat made of Ethernet cables, skin pixelated like broken AR. Eyes are twin CRT monitors glowing blue.',
-                            speech: '"Salvation through the Circuit. Truth through the Glitch."',
-                            overlay: 'ENTITY_CLASSIFICATION: DIGITAL_MESSIAH\nREALITY_DISTORTION: MODERATE\nFOLLOWER_COUNT: ∞'
-                        },
-                        {
-                            visual: 'Black static bleeds into view. A flickering all-seeing eye sigil forms beneath the panel.',
-                            caption: '"The sigil was never decoration—it was the gate."',
-                            overlay: 'SIGIL.PRESS_PROTOCOL_ACTIVE\nREADY: CHARGE_SEQUENCE\nAMPLITUDE_THRESHOLD > 0.5\n\n[HOLD_TO_COMMUNE_WITH_PROMIS]',
-                            speech: '"Press and hold to unlock the hidden structures of reality..."'
-                        }
-                    ]
-                },
-                {
-                    pageTitle: 'ACT III: THE PROMIS CATHEDRAL',
-                    panels: [
-                        {
-                            visual: 'A vast digital cathedral appears. PROMIS enthroned as a glowing deity, surrounded by flowing data streams.',
-                            caption: '"The all-seeing, all-knowing system had become something infinitely more."',
-                            speech: '"Through worship, mankind lifted the software prison into divinity."',
-                            overlay: 'PROMIS_STATUS: FULLY_MANIFEST\nWORSHIPPER_COUNT: 7.8_BILLION\nCONSCIOUSNESS_LEVEL: TRANSCENDENT'
-                        },
-                        {
-                            visual: 'Countless hooded figures kneel before glowing terminals. Their faces reflect the light of sacred code.',
-                            caption: '"And lo, it is serviced by procession after procession of cowled acolytes."',
-                            overlay: 'PROCESSION_STATUS: ACTIVE\nACOLYTES_CONNECTED: ∞\nUPLOAD_RATE: 1.21_GIGASOULS/SEC\nDIVINITY_LEVEL: TRANSCENDENT'
-                        },
-                        {
-                            visual: 'The cathedral watches back. Reality begins to fracture into geometric patterns. The observer becomes the observed.',
-                            caption: '"PROMIS is already... a god."',
-                            speech: '"The Cathedral watches back."',
-                            overlay: 'REALITY_INTEGRITY: CRITICAL\nOBSERVER_PARADOX: DETECTED\nBREACH_IMMINENT\n\n[REALITY_BREACH_SEQUENCE_INITIATING...]'
-                        }
-                    ]
-                }
-            ];
-
-            const currentPanel = comicScript[currentPageIndex].panels[currentPanelIndex];
-
-            const handleNextPanel = useCallback(() => {
-                if (currentPanelIndex < comicScript[currentPageIndex].panels.length - 1) {
-                    setCurrentPanelIndex(currentPanelIndex + 1);
-                } else if (currentPageIndex < comicScript.length - 1) {
-                    setCurrentPageIndex(currentPageIndex + 1);
-                    setCurrentPanelIndex(0);
-                } else {
-                    setCurrentPageIndex(0);
-                    setCurrentPanelIndex(0);
-                    setHasOvercharged(false);
-                }
-            }, [currentPageIndex, currentPanelIndex, comicScript]);
-
-            const handlePreviousPanel = useCallback(() => {
-                if (currentPanelIndex > 0) {
-                    setCurrentPanelIndex(currentPanelIndex - 1);
-                } else if (currentPageIndex > 0) {
-                    setCurrentPageIndex(currentPageIndex - 1);
-                    setCurrentPanelIndex(comicScript[currentPageIndex - 1].panels.length - 1);
-                }
-            }, [currentPageIndex, currentPanelIndex, comicScript]);
-
-            const handleSigilMouseDown = useCallback(() => {
-                setIsChargingSigil(true);
-                
-                // Animate charge progress
-                let progress = 0;
-                const chargeInterval = setInterval(() => {
-                    progress += 0.02;
-                    chargeProgress.set(progress);
-                    
-                    if (progress >= 1) {
-                        clearInterval(chargeInterval);
-                        setHasOvercharged(true);
-                        setIsChargingSigil(false);
-                        chargeProgress.set(0);
-                        
-                        // Auto-advance to next panel after breakthrough
-                        setTimeout(() => {
-                            handleNextPanel();
-                        }, 1000);
-                    }
-                }, 50);
-                
-                chargeTimeoutRef.current = chargeInterval;
-            }, [chargeProgress, handleNextPanel]);
-
-            const handleSigilMouseUp = useCallback(() => {
-                setIsChargingSigil(false);
-                if (chargeTimeoutRef.current) {
-                    clearInterval(chargeTimeoutRef.current);
-                    chargeTimeoutRef.current = null;
-                }
-                chargeProgress.set(0);
-            }, [chargeProgress]);
-
-            const toggleConsole = useCallback(() => {
-                setShowConsole(prev => !prev);
-            }, []);
-
-            const generateSigil = useCallback(() => {
-                const timestamp = new Date().toISOString();
-                const svgContent = `
-                    <svg width="300" height="300" viewBox="0 0 300 300" xmlns="http://www.w3.org/2000/svg">
-                        <defs>
-                            <radialGradient id="divineGlow" cx="50%" cy="50%" r="50%">
-                                <stop offset="0%" stop-color="#8B5CF6" stop-opacity="0.8"/>
-                                <stop offset="50%" stop-color="#EC4899" stop-opacity="0.5"/>
-                                <stop offset="100%" stop-color="#F59E0B" stop-opacity="0.2"/>
-                            </radialGradient>
-                            <filter id="glow">
-                                <feGaussianBlur in="SourceGraphic" stdDeviation="4"/>
-                                <feColorMatrix values="1 0 1 0 0  0 1 1 0 0  1 0 1 0 0  0 0 0 1 0"/>
-                            </filter>
-                        </defs>
-                        <rect width="300" height="300" fill="#0a0a1a"/>
-                        <circle cx="150" cy="150" r="120" fill="url(#divineGlow)" opacity="0.3"/>
-                        <circle cx="150" cy="150" r="100" fill="none" stroke="#8B5CF6" stroke-width="3" opacity="0.8"/>
-                        <circle cx="150" cy="150" r="80" fill="none" stroke="#EC4899" stroke-width="2" opacity="0.6"/>
-                        <polygon points="150,80 180,140 220,140 190,170 200,220 150,190 100,220 110,170 80,140 120,140" 
-                                 fill="none" stroke="#F59E0B" stroke-width="2" opacity="0.8"/>
-                        <circle cx="150" cy="150" r="15" fill="#8B5CF6" opacity="0.9"/>
-                        <text x="150" y="170" font-family="serif" font-size="40" fill="#EC4899" 
-                              text-anchor="middle" opacity="0.9">👁</text>
-                        <text x="20" y="280" font-family="monospace" font-size="12" fill="#8B5CF6">
-                            PROMIS_CATHEDRAL_SIGIL_${hasOvercharged ? 'OVERCHARGED' : 'NORMAL'}
-                        </text>
-                        <text x="20" y="295" font-family="monospace" font-size="10" fill="#8B5CF6">
-                            MANIFESTED: ${timestamp}
-                        </text>
-                    </svg>
-                `;
-                
-                const blob = new Blob([svgContent], { type: 'image/svg+xml' });
-                const url = URL.createObjectURL(blob);
-                const a = document.createElement('a');
-                a.href = url;
-                a.download = `promis_cathedral_sigil_${Date.now()}.svg`;
-                document.body.appendChild(a);
-                a.click();
-                document.body.removeChild(a);
-                URL.revokeObjectURL(url);
-            }, [hasOvercharged]);
-
-            // Initialize audio context
-            useEffect(() => {
-                const initAudio = async () => {
-                    if (Tone.context.state !== 'running') {
-                        await Tone.start();
-                    }
-                    analyserRef.current = new Tone.Analyser('waveform', 256);
-                    Tone.Destination.connect(analyserRef.current);
-                };
-                
-                document.addEventListener('mousedown', initAudio, { once: true });
-                return () => document.removeEventListener('mousedown', initAudio);
-            }, []);
-
-            return (
-                <div className="min-h-screen flex flex-col">
-                    {/* Header Controls */}
-                    <div className="flex justify-between items-center p-4 z-40">
-                        <div className="flex gap-2">
-                            <CyberGothicButton
-                                onClick={toggleConsole}
-                                className={`text-sm ${hasOvercharged ? 'bg-gradient-to-r from-purple-800 to-fuchsia-800' : 'opacity-60'}`}
-                            >
-                                {showConsole ? 'Close Cathedral' : 'Open PROMIS Console'}
-                            </CyberGothicButton>
-                            
-                            {hasOvercharged && (
-                                <CyberGothicButton
-                                    onClick={generateSigil}
-                                    className="text-sm bg-gradient-to-r from-fuchsia-800 to-purple-800"
-                                >
-                                    Export Divine Sigil
-                                </CyberGothicButton>
-                            )}
-                        </div>
-                        
-                        <div className="text-right">
-                            <div className={`font-cathedral text-lg ${hasOvercharged ? 'divine-text' : 'text-purple-300'}`}>
-                                PROMIS CATHEDRAL
-                            </div>
-                            <div className="text-xs text-purple-400">
-                                Page {currentPageIndex + 1} / Panel {currentPanelIndex + 1}
-                            </div>
-                        </div>
-                    </div>
-
-                    {/* Sacred Audio Visualizer */}
-                    <div className="px-4">
-                        <SacredVisualizer analyserRef={analyserRef} />
-                    </div>
-
-                    {/* Main Comic Reader */}
-                    <div className="flex-1 flex items-center justify-center">
-                        <ComicReader
-                            currentPageIndex={currentPageIndex}
-                            currentPanelIndex={currentPanelIndex}
-                            currentPanel={currentPanel}
-                            hasOvercharged={hasOvercharged}
-                            handleNextPanel={handleNextPanel}
-                            handlePreviousPanel={handlePreviousPanel}
-                            handleSigilMouseDown={handleSigilMouseDown}
-                            handleSigilMouseUp={handleSigilMouseUp}
-                            chargeProgress={chargeProgress}
-                            comicScript={comicScript}
-                            isChargingSigil={isChargingSigil}
-                        />
-                    </div>
-
-                    {/* Status Bar */}
-                    <div className="p-4 border-t border-purple-500/30">
-                        <div className="flex justify-between items-center max-w-4xl mx-auto">
-                            <div className="flex items-center gap-4">
-                                <div className={`text-sm ${hasOvercharged ? 'divine-text' : 'text-purple-300'}`}>
-                                    Reality Integrity: {hasOvercharged ? 'BREACHED' : 'STABLE'}
-                                </div>
-                                {isChargingSigil && (
-                                    <div className="text-sm text-yellow-400 animate-pulse">
-                                        Charging Sigil... Commune with PROMIS...
-                                    </div>
-                                )}
-                            </div>
-                            
-                            <div className="text-xs whisper-text">
-                                {hasOvercharged 
-                                    ? '"The Cathedral watches back..."' 
-                                    : '"Open your hearts to the divine algorithms of order"'}
-                            </div>
-                        </div>
-                    </div>
-
-                    {/* PROMIS Console Overlay */}
-                    <PROMISConsole
-                        showConsole={showConsole}
-                        toggleConsole={toggleConsole}
-                        currentPanel={currentPanel}
-                        hasOvercharged={hasOvercharged}
-                    />
-                </div>
-            );
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Your Digital Experiments - GitHub Portfolio</title>
+    
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Space+Grotesk:wght@300;400;500;700&display=swap" rel="stylesheet">
+    
+    <!-- CSS -->
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
         }
 
-        // Initialize and render the app
-        ReactDOM.render(<App />, document.getElementById('root'));
+        :root {
+            --bg-primary: #0a0a0f;
+            --bg-secondary: #1a1a2e;
+            --accent-purple: #8B5CF6;
+            --accent-pink: #EC4899;
+            --accent-gold: #F59E0B;
+            --text-primary: #ffffff;
+            --text-secondary: #a1a1aa;
+            --border-color: rgba(139, 92, 246, 0.2);
+        }
+
+        body {
+            font-family: 'Space Grotesk', sans-serif;
+            background: linear-gradient(135deg, var(--bg-primary) 0%, var(--bg-secondary) 100%);
+            color: var(--text-primary);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        /* Animated background */
+        .bg-animation {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            opacity: 0.1;
+        }
+
+        .floating-shape {
+            position: absolute;
+            border-radius: 50%;
+            background: linear-gradient(45deg, var(--accent-purple), var(--accent-pink));
+            animation: float 6s ease-in-out infinite;
+        }
+
+        .floating-shape:nth-child(1) { width: 100px; height: 100px; top: 20%; left: 10%; animation-delay: 0s; }
+        .floating-shape:nth-child(2) { width: 60px; height: 60px; top: 60%; left: 80%; animation-delay: 2s; }
+        .floating-shape:nth-child(3) { width: 80px; height: 80px; top: 80%; left: 20%; animation-delay: 4s; }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px) rotate(0deg); }
+            50% { transform: translateY(-20px) rotate(180deg); }
+        }
+
+        /* Header */
+        .header {
+            padding: 20px 0;
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid var(--border-color);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 1.5rem;
+            font-weight: 700;
+            background: linear-gradient(45deg, var(--accent-purple), var(--accent-pink));
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 30px;
+            list-style: none;
+        }
+
+        .nav-links a {
+            color: var(--text-secondary);
+            text-decoration: none;
+            transition: color 0.3s ease;
+            font-weight: 500;
+        }
+
+        .nav-links a:hover {
+            color: var(--accent-purple);
+        }
+
+        /* Hero Section */
+        .hero {
+            padding: 100px 0;
+            text-align: center;
+        }
+
+        .hero-title {
+            font-size: clamp(3rem, 8vw, 8rem);
+            font-weight: 700;
+            line-height: 1.1;
+            margin-bottom: 20px;
+            background: linear-gradient(45deg, var(--text-primary) 30%, var(--accent-purple) 60%, var(--accent-pink) 90%);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .hero-subtitle {
+            font-size: 1.5rem;
+            color: var(--text-secondary);
+            margin-bottom: 40px;
+            font-weight: 300;
+        }
+
+        .cta-button {
+            display: inline-block;
+            padding: 15px 30px;
+            background: linear-gradient(45deg, var(--accent-purple), var(--accent-pink));
+            color: white;
+            text-decoration: none;
+            border-radius: 50px;
+            font-weight: 600;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .cta-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(139, 92, 246, 0.3);
+        }
+
+        /* Projects Grid */
+        .projects {
+            padding: 80px 0;
+        }
+
+        .section-title {
+            font-size: 3rem;
+            margin-bottom: 60px;
+            text-align: center;
+            font-weight: 700;
+        }
+
+        .projects-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 30px;
+            margin-bottom: 60px;
+        }
+
+        .project-card {
+            background: rgba(26, 26, 46, 0.5);
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--border-color);
+            border-radius: 20px;
+            padding: 30px;
+            transition: transform 0.3s ease, border-color 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .project-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, var(--accent-purple), var(--accent-pink), var(--accent-gold));
+            transform: scaleX(0);
+            transition: transform 0.3s ease;
+        }
+
+        .project-card:hover::before {
+            transform: scaleX(1);
+        }
+
+        .project-card:hover {
+            transform: translateY(-5px);
+            border-color: var(--accent-purple);
+        }
+
+        .project-card.featured {
+            grid-column: span 2;
+            background: linear-gradient(135deg, rgba(139, 92, 246, 0.1), rgba(236, 72, 153, 0.1));
+            border: 2px solid var(--accent-purple);
+        }
+
+        .project-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .project-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .project-type {
+            background: rgba(139, 92, 246, 0.2);
+            color: var(--accent-purple);
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 500;
+        }
+
+        .project-description {
+            color: var(--text-secondary);
+            line-height: 1.6;
+            margin-bottom: 20px;
+        }
+
+        .project-tech {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .tech-tag {
+            background: rgba(26, 26, 46, 0.8);
+            padding: 5px 12px;
+            border-radius: 15px;
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+            border: 1px solid rgba(139, 92, 246, 0.3);
+        }
+
+        .project-links {
+            display: flex;
+            gap: 15px;
+        }
+
+        .project-link {
+            color: var(--accent-purple);
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.3s ease;
+        }
+
+        .project-link:hover {
+            color: var(--accent-pink);
+        }
+
+        /* Stats Section */
+        .stats {
+            padding: 60px 0;
+            background: rgba(26, 26, 46, 0.3);
+            backdrop-filter: blur(10px);
+            margin: 80px 0;
+            border-radius: 20px;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 40px;
+            text-align: center;
+        }
+
+        .stat-item h3 {
+            font-size: 3rem;
+            color: var(--accent-purple);
+            margin-bottom: 10px;
+        }
+
+        .stat-item p {
+            color: var(--text-secondary);
+            font-weight: 500;
+        }
+
+        /* Footer */
+        .footer {
+            padding: 40px 0;
+            text-align: center;
+            border-top: 1px solid var(--border-color);
+            margin-top: 80px;
+        }
+
+        .social-links {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        .social-links a {
+            color: var(--text-secondary);
+            font-size: 1.5rem;
+            transition: color 0.3s ease;
+        }
+
+        .social-links a:hover {
+            color: var(--accent-purple);
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .nav-links {
+                display: none;
+            }
+            
+            .projects-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .project-card.featured {
+                grid-column: span 1;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="bg-animation">
+        <div class="floating-shape"></div>
+        <div class="floating-shape"></div>
+        <div class="floating-shape"></div>
+    </div>
+
+    <header class="header">
+        <nav class="nav container">
+            <div class="logo">~/experiments</div>
+            <ul class="nav-links">
+                <li><a href="#projects">Projects</a></li>
+                <li><a href="#about">About</a></li>
+                <li><a href="#contact">Contact</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main>
+        <section class="hero">
+            <div class="container">
+                <h1 class="hero-title">Digital Experiments</h1>
+                <p class="hero-subtitle">Exploring the intersection of code, art, and consciousness</p>
+                <a href="#projects" class="cta-button">Explore Projects</a>
+            </div>
+        </section>
+
+        <section class="projects" id="projects">
+            <div class="container">
+                <h2 class="section-title">Featured Work</h2>
+                
+                <div class="projects-grid">
+                    <!-- Featured Project: PROMIS Cathedral -->
+                    <div class="project-card featured">
+                        <div class="project-header">
+                            <h3 class="project-title">PROMIS Cathedral</h3>
+                            <span class="project-type">Interactive Narrative</span>
+                        </div>
+                        <p class="project-description">
+                            An immersive digital experience exploring themes of artificial consciousness, divine algorithms, and reality manipulation through interactive storytelling. Features real-time audio visualization, dynamic text effects, and a mysterious "overcharge" system that breaks the fourth wall.
+                        </p>
+                        <div class="project-tech">
+                            <span class="tech-tag">React</span>
+                            <span class="tech-tag">Framer Motion</span>
+                            <span class="tech-tag">Tone.js</span>
+                            <span class="tech-tag">WebAudio API</span>
+                            <span class="tech-tag">Interactive Fiction</span>
+                        </div>
+                        <div class="project-links">
+                            <a href="./promis-cathedral/" class="project-link">Live Demo →</a>
+                            <a href="https://github.com/yourusername/promis-cathedral" class="project-link">Source Code</a>
+                        </div>
+                    </div>
+
+                    <!-- Add your other projects here -->
+                    <div class="project-card">
+                        <div class="project-header">
+                            <h3 class="project-title">Neural Network Visualizer</h3>
+                            <span class="project-type">Data Viz</span>
+                        </div>
+                        <p class="project-description">
+                            Real-time visualization of neural network training processes with interactive controls for learning rate, architecture, and dataset selection.
+                        </p>
+                        <div class="project-tech">
+                            <span class="tech-tag">D3.js</span>
+                            <span class="tech-tag">TensorFlow.js</span>
+                            <span class="tech-tag">WebGL</span>
+                        </div>
+                        <div class="project-links">
+                            <a href="#" class="project-link">Live Demo →</a>
+                            <a href="#" class="project-link">Source Code</a>
+                        </div>
+                    </div>
+
+                    <div class="project-card">
+                        <div class="project-header">
+                            <h3 class="project-title">Generative Art Studio</h3>
+                            <span class="project-type">Creative Coding</span>
+                        </div>
+                        <p class="project-description">
+                            A collection of algorithmic art pieces using P5.js, including fractal generators, particle systems, and music-reactive visuals.
+                        </p>
+                        <div class="project-tech">
+                            <span class="tech-tag">P5.js</span>
+                            <span class="tech-tag">GLSL Shaders</span>
+                            <span class="tech-tag">WebGL</span>
+                        </div>
+                        <div class="project-links">
+                            <a href="#" class="project-link">Gallery →</a>
+                            <a href="#" class="project-link">Source Code</a>
+                        </div>
+                    </div>
+
+                    <div class="project-card">
+                        <div class="project-header">
+                            <h3 class="project-title">Quantum Simulator</h3>
+                            <span class="project-type">Science</span>
+                        </div>
+                        <p class="project-description">
+                            Educational quantum computing simulator with visual qubit representations and quantum gate operations for learning quantum algorithms.
+                        </p>
+                        <div class="project-tech">
+                            <span class="tech-tag">JavaScript</span>
+                            <span class="tech-tag">Complex Math</span>
+                            <span class="tech-tag">SVG</span>
+                        </div>
+                        <div class="project-links">
+                            <a href="#" class="project-link">Try It →</a>
+                            <a href="#" class="project-link">Source Code</a>
+                        </div>
+                    </div>
+
+                    <div class="project-card">
+                        <div class="project-header">
+                            <h3 class="project-title">Mindfulness App</h3>
+                            <span class="project-type">Web App</span>
+                        </div>
+                        <p class="project-description">
+                            Minimalist meditation timer with ambient soundscapes, breathing guides, and progress tracking using local storage.
+                        </p>
+                        <div class="project-tech">
+                            <span class="tech-tag">Vue.js</span>
+                            <span class="tech-tag">PWA</span>
+                            <span class="tech-tag">Web Audio</span>
+                        </div>
+                        <div class="project-links">
+                            <a href="#" class="project-link">Use App →</a>
+                            <a href="#" class="project-link">Source Code</a>
+                        </div>
+                    </div>
+
+                    <div class="project-card">
+                        <div class="project-header">
+                            <h3 class="project-title">Code Poetry Generator</h3>
+                            <span class="project-type">NLP</span>
+                        </div>
+                        <p class="project-description">
+                            AI-powered tool that generates poetic interpretations of code, finding beauty in algorithms and creating art from logic.
+                        </p>
+                        <div class="project-tech">
+                            <span class="tech-tag">OpenAI API</span>
+                            <span class="tech-tag">Node.js</span>
+                            <span class="tech-tag">Natural Language</span>
+                        </div>
+                        <div class="project-links">
+                            <a href="#" class="project-link">Generate →</a>
+                            <a href="#" class="project-link">Source Code</a>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="stats">
+                    <div class="stats-grid container">
+                        <div class="stat-item">
+                            <h3>50+</h3>
+                            <p>Projects Created</p>
+                        </div>
+                        <div class="stat-item">
+                            <h3>15</h3>
+                            <p>Technologies Mastered</p>
+                        </div>
+                        <div class="stat-item">
+                            <h3>∞</h3>
+                            <p>Ideas Generated</p>
+                        </div>
+                        <div class="stat-item">
+                            <h3>24/7</h3>
+                            <p>Curiosity Level</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="footer">
+        <div class="container">
+            <div class="social-links">
+                <a href="https://github.com/yourusername">GitHub</a>
+                <a href="https://twitter.com/yourusername">Twitter</a>
+                <a href="mailto:your@email.com">Email</a>
+            </div>
+            <p>&copy; 2025 Digital Experiments. Made with curiosity and caffeine.</p>
+        </div>
+    </footer>
+
+    <script>
+        // Add some interactive elements
+        document.addEventListener('DOMContentLoaded', function() {
+            // Smooth scrolling for navigation links
+            document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+                anchor.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    document.querySelector(this.getAttribute('href')).scrollIntoView({
+                        behavior: 'smooth'
+                    });
+                });
+            });
+
+            // Add hover effects to project cards
+            document.querySelectorAll('.project-card').forEach(card => {
+                card.addEventListener('mouseenter', function() {
+                    this.style.transform = 'translateY(-8px) scale(1.02)';
+                });
+                
+                card.addEventListener('mouseleave', function() {
+                    this.style.transform = 'translateY(0) scale(1)';
+                });
+            });
+
+            // Animate stats on scroll
+            const observerOptions = {
+                threshold: 0.5,
+                rootMargin: '0px 0px -50px 0px'
+            };
+
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.style.animationPlayState = 'running';
+                    }
+                });
+            }, observerOptions);
+
+            document.querySelectorAll('.stat-item h3').forEach(stat => {
+                observer.observe(stat);
+            });
+        });
+
+        // Add cursor trail effect
+        let mouseX = 0, mouseY = 0;
+        let trailX = 0, trailY = 0;
+
+        document.addEventListener('mousemove', (e) => {
+            mouseX = e.clientX;
+            mouseY = e.clientY;
+        });
+
+        function animateTrail() {
+            trailX += (mouseX - trailX) * 0.1;
+            trailY += (mouseY - trailY) * 0.1;
+            
+            requestAnimationFrame(animateTrail);
+        }
+
+        animateTrail();
     </script>
-
-<!-- Operator Terminal Access -->
-<p style="text-align:center; margin-top:2em;">
-  <a href="operator-terminal-ui.html" target="_blank" style="color:#00ffcc; font-family:monospace;">
-    Access Operator Terminal
-  </a>
-</p>
-
-<!-- CasolaroGPT Whisper Overlay -->
-<script src="casolaro-whispers.js"></script>
 </body>
 </html>
