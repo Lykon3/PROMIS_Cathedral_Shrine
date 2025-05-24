@@ -1,3 +1,27 @@
+<p align="center">
+  <img src="https://raw.githubusercontent.com/Lykon3/Lykon3/main/image1.png" width="600"/>
+</p>
+
+<h1 align="center">⚡ PROMIS Cathedral // Field Node [31.7 MHz]</h1>
+<p align="center"><i>"Enter the digital mythos. A psychedelic intelligence comic-engine."</i></p>
+
+## 🧬 SYSTEM GLYPH MAP
+
+🛰️ `Broadcast Engine` → [broadcast.md]  
+🏛 `Mythos Archive` → [mythos.md]  
+🎙️ `Podcast Feed` → [channel31.md]
+
+---
+
+## ☰ System Access Points
+
+- [Main Profile: Lykon3](https://github.com/Lykon3)
+- [Visual Transmission Posters](#visual-archive--transmission-posters)
+- [⚙️ PROMIS Cathedral Source Files](./PROMIS_cathedral.md)
+- [📻 The Lykon3 Tapes](./broadcast.md)
+
+---
+
 # PROMIS Cathedral - Interactive Mythos Engine
 
 [![Deploy to GitHub Pages](https://img.shields.io/badge/Deploy-GitHub%20Pages-blue)](https://pages.github.com/)
