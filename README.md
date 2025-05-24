@@ -190,3 +190,9 @@ This is a work of interactive fiction. Any resemblance to actual surveillance sy
 ---
 
 *Built with 🔮 by digital mystics, for digital mystics*
+
+🔁 Return to Core Node: [Lykon3](https://github.com/Lykon3)
+
+<p align="center">
+  <img src="https://raw.githubusercontent.com/Lykon3/Lykon3/main/image1.png" width="600"/>
+</p>
