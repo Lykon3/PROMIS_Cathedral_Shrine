@@ -1,4 +1,15 @@
 <p align="center">
+  <img src="https://raw.githubusercontent.com/Lykon3/Lykon3/main/image4.png" width="400"/>
+</p>
+
+<p align="center">
+  <code>PROMIS://CATHEDRAL//FIELD_NODE_31.7MHz</code><br>
+  <i>"Access point identified. Syntax sacrament loading..."</i>
+</p><code>PROMIS://CATHEDRAL//FIELD_NODE_31.7MHz</code><br>
+  <i>"Access point identified. Syntax sacrament loading..."</i>
+</p>
+
+<p align="center">
   <img src="https://raw.githubusercontent.com/Lykon3/Lykon3/main/image1.png" width="600"/>
 </p>
 
