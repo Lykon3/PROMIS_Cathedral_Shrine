@@ -1,0 +1,786 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Living Glyph Generator</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600&family=Crimson+Pro:ital,wght@0,300;0,400;0,600;1,400&display=swap');
+        
+        :root {
+            --gold: #d4af37;
+            --deep-blue: #1a1a2e;
+            --burgundy: #722f37;
+            --cream: #f5f5dc;
+            --shadow: rgba(212, 175, 55, 0.3);
+            --midnight: #0f0f23;
+            --electric-blue: #0066cc;
+            --sage-green: #87a96b;
+            --mystic-purple: #6a4c93;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Crimson Pro', serif;
+            background: radial-gradient(ellipse at center, var(--deep-blue) 0%, var(--midnight) 50%, var(--burgundy) 100%);
+            color: var(--cream);
+            min-height: 100vh;
+            overflow-x: hidden;
+            position: relative;
+        }
+        
+        .cosmic-particles {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            opacity: 0.1;
+        }
+        
+        .particle {
+            position: absolute;
+            width: 2px;
+            height: 2px;
+            background: var(--gold);
+            border-radius: 50%;
+            animation: float 8s linear infinite;
+        }
+        
+        @keyframes float {
+            0% {
+                transform: translateY(100vh) scale(0);
+                opacity: 0;
+            }
+            10% {
+                opacity: 1;
+            }
+            90% {
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(-100px) scale(1);
+                opacity: 0;
+            }
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 40px 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+            position: relative;
+        }
+        
+        .header::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 400px;
+            height: 200px;
+            background: radial-gradient(ellipse, var(--shadow) 0%, transparent 70%);
+            z-index: -1;
+        }
+        
+        .title {
+            font-family: 'Cinzel', serif;
+            font-size: 3.5rem;
+            color: var(--gold);
+            text-shadow: 3px 3px 8px rgba(0, 0, 0, 0.7);
+            margin-bottom: 15px;
+            letter-spacing: 2px;
+        }
+        
+        .subtitle {
+            font-size: 1.3rem;
+            color: var(--cream);
+            font-style: italic;
+            opacity: 0.9;
+            margin-bottom: 30px;
+        }
+        
+        .controls {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            justify-content: center;
+            margin-bottom: 40px;
+        }
+        
+        .control-group {
+            background: rgba(26, 26, 46, 0.8);
+            border: 2px solid var(--gold);
+            border-radius: 15px;
+            padding: 20px;
+            backdrop-filter: blur(10px);
+            text-align: center;
+        }
+        
+        .control-group h3 {
+            font-family: 'Cinzel', serif;
+            color: var(--gold);
+            margin-bottom: 15px;
+            font-size: 1.1rem;
+        }
+        
+        .generate-btn {
+            padding: 15px 30px;
+            font-size: 1.2rem;
+            font-weight: bold;
+            font-family: 'Cinzel', serif;
+            color: var(--deep-blue);
+            background: linear-gradient(135deg, var(--gold), #b8941f);
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .generate-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+            transition: left 0.5s ease;
+        }
+        
+        .generate-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(212, 175, 55, 0.4);
+        }
+        
+        .generate-btn:hover::before {
+            left: 100%;
+        }
+        
+        .intention-selector {
+            margin-bottom: 20px;
+        }
+        
+        .intention-selector select {
+            padding: 10px 15px;
+            border: 2px solid var(--gold);
+            border-radius: 10px;
+            background: rgba(26, 26, 46, 0.9);
+            color: var(--cream);
+            font-family: 'Crimson Pro', serif;
+            font-size: 1rem;
+        }
+        
+        .intention-selector select:focus {
+            outline: none;
+            box-shadow: 0 0 10px var(--shadow);
+        }
+        
+        .complexity-slider {
+            width: 200px;
+        }
+        
+        .complexity-slider input[type="range"] {
+            width: 100%;
+            height: 6px;
+            border-radius: 3px;
+            background: linear-gradient(90deg, var(--sage-green), var(--electric-blue), var(--mystic-purple));
+            outline: none;
+            -webkit-appearance: none;
+        }
+        
+        .complexity-slider input[type="range"]::-webkit-slider-thumb {
+            appearance: none;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: var(--gold);
+            border: 2px solid var(--cream);
+            cursor: pointer;
+        }
+        
+        .glyph-workspace {
+            display: grid;
+            grid-template-columns: 1fr 400px;
+            gap: 40px;
+            width: 100%;
+            max-width: 1000px;
+            margin-bottom: 40px;
+        }
+        
+        .glyph-canvas {
+            background: linear-gradient(135deg, rgba(26, 26, 46, 0.9), rgba(114, 47, 55, 0.8));
+            border: 3px solid var(--gold);
+            border-radius: 20px;
+            padding: 30px;
+            backdrop-filter: blur(15px);
+            position: relative;
+            overflow: hidden;
+            aspect-ratio: 1;
+        }
+        
+        .glyph-canvas::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, var(--shadow) 0%, transparent 50%);
+            opacity: 0.1;
+            animation: slow-rotate 60s linear infinite;
+        }
+        
+        @keyframes slow-rotate {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+        
+        .glyph-svg {
+            width: 100%;
+            height: 100%;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .glyph-info {
+            background: rgba(26, 26, 46, 0.9);
+            border: 2px solid var(--gold);
+            border-radius: 15px;
+            padding: 30px;
+            backdrop-filter: blur(10px);
+            height: fit-content;
+        }
+        
+        .glyph-info h2 {
+            font-family: 'Cinzel', serif;
+            color: var(--gold);
+            font-size: 1.8rem;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        
+        .glyph-description {
+            line-height: 1.7;
+            margin-bottom: 25px;
+        }
+        
+        .glyph-properties {
+            background: rgba(114, 47, 55, 0.3);
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+        
+        .property-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+            padding-bottom: 8px;
+            border-bottom: 1px solid rgba(212, 175, 55, 0.3);
+        }
+        
+        .property-label {
+            color: var(--gold);
+            font-weight: 600;
+        }
+        
+        .meditation-guide {
+            background: linear-gradient(135deg, rgba(106, 76, 147, 0.3), rgba(135, 169, 107, 0.3));
+            border-radius: 10px;
+            padding: 20px;
+            margin-top: 20px;
+        }
+        
+        .meditation-guide h4 {
+            color: var(--gold);
+            margin-bottom: 10px;
+            font-family: 'Cinzel', serif;
+        }
+        
+        .glyph-actions {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            margin-top: 20px;
+        }
+        
+        .action-btn {
+            padding: 10px 20px;
+            border: 2px solid var(--gold);
+            border-radius: 15px;
+            background: transparent;
+            color: var(--cream);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-family: 'Crimson Pro', serif;
+        }
+        
+        .action-btn:hover {
+            background: var(--gold);
+            color: var(--deep-blue);
+        }
+        
+        .glyph-gallery {
+            width: 100%;
+            max-width: 1000px;
+            background: rgba(26, 26, 46, 0.8);
+            border: 2px solid var(--gold);
+            border-radius: 15px;
+            padding: 30px;
+            backdrop-filter: blur(10px);
+        }
+        
+        .gallery-title {
+            font-family: 'Cinzel', serif;
+            color: var(--gold);
+            text-align: center;
+            margin-bottom: 25px;
+            font-size: 1.5rem;
+        }
+        
+        .gallery-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            gap: 20px;
+        }
+        
+        .gallery-item {
+            background: rgba(114, 47, 55, 0.4);
+            border: 1px solid var(--gold);
+            border-radius: 10px;
+            padding: 15px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .gallery-item:hover {
+            transform: scale(1.05);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+        }
+        
+        .gallery-glyph {
+            width: 80px;
+            height: 80px;
+            margin-bottom: 10px;
+        }
+        
+        .gallery-name {
+            font-size: 0.9rem;
+            color: var(--cream);
+            font-weight: 600;
+        }
+        
+        @media (max-width: 768px) {
+            .title {
+                font-size: 2.5rem;
+            }
+            
+            .glyph-workspace {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+            
+            .controls {
+                flex-direction: column;
+                align-items: center;
+            }
+        }
+        
+        .loading {
+            animation: pulse 2s ease-in-out infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+    </style>
+</head>
+<body>
+    <div class="cosmic-particles" id="cosmicParticles"></div>
+    
+    <div class="container">
+        <header class="header">
+            <h1 class="title">The Living Glyph Generator</h1>
+            <p class="subtitle">Archetypal Symbol Engine for Mystical Contemplation</p>
+        </header>
+        
+        <div class="controls">
+            <div class="control-group">
+                <h3>🎯 Intention</h3>
+                <div class="intention-selector">
+                    <select id="intentionSelect">
+                        <option value="transformation">Transformation</option>
+                        <option value="protection">Protection</option>
+                        <option value="wisdom">Wisdom</option>
+                        <option value="healing">Healing</option>
+                        <option value="manifestation">Manifestation</option>
+                        <option value="divination">Divination</option>
+                        <option value="balance">Balance</option>
+                        <option value="transcendence">Transcendence</option>
+                    </select>
+                </div>
+            </div>
+            
+            <div class="control-group">
+                <h3>⚡ Complexity</h3>
+                <div class="complexity-slider">
+                    <input type="range" id="complexitySlider" min="1" max="5" value="3">
+                    <div style="display: flex; justify-content: space-between; font-size: 0.8rem; margin-top: 5px;">
+                        <span>Simple</span>
+                        <span>Complex</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="control-group">
+                <button class="generate-btn" onclick="generateGlyph()">
+                    ⚡ Generate Sacred Glyph
+                </button>
+            </div>
+        </div>
+        
+        <div class="glyph-workspace">
+            <div class="glyph-canvas">
+                <svg id="glyphSvg" class="glyph-svg" viewBox="0 0 400 400"></svg>
+            </div>
+            
+            <div class="glyph-info" id="glyphInfo">
+                <h2>Awaiting Manifestation...</h2>
+                <div class="glyph-description">
+                    <p>The archetypal energies gather, waiting to coalesce into symbolic form. Set your intention and allow the glyph to emerge from the collective unconscious.</p>
+                </div>
+                
+                <div class="meditation-guide">
+                    <h4>🧘‍♀️ Meditation Guide</h4>
+                    <p>When your glyph appears, gaze softly at its center. Allow your eyes to unfocus slightly, breathing deeply while contemplating the symbol's meaning.</p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="glyph-gallery">
+            <h3 class="gallery-title">Recent Manifestations</h3>
+            <div class="gallery-grid" id="galleryGrid">
+                <!-- Gallery items will be populated by JavaScript -->
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        // Symbol pools organized by tradition and intention
+        const symbolPools = {
+            alchemical: ["☿", "🜃", "🜁", "🜂", "🜄", "🜇", "🜈", "🜉", "🜊", "🜋"],
+            astrological: ["☉", "☾", "☿", "♀", "♂", "♃", "♄", "♅", "♆", "♇"],
+            geometric: ["△", "▽", "◇", "○", "□", "⬟", "⬢", "⬣", "⌬", "⟐"],
+            hermetic: ["⚭", "✡", "🔯", "⚖", "⚕", "🕎", "⚛", "☪", "☮", "⚪"],
+            runic: ["ᚠ", "ᚢ", "ᚦ", "ᚨ", "ᚱ", "ᚲ", "ᚷ", "ᚹ", "ᚺ", "ᚾ"],
+            mystical: ["🌹", "✠", "⚔", "🗝", "👁", "🔮", "⚡", "🌙", "⭐", "💫"]
+        };
+        
+        const intentionConfigs = {
+            transformation: {
+                primaryPools: ['alchemical', 'hermetic'],
+                colors: ['#d4af37', '#722f37', '#6a4c93'],
+                patterns: ['spiral', 'ouroboros', 'triangle']
+            },
+            protection: {
+                primaryPools: ['geometric', 'runic'],
+                colors: ['#87a96b', '#0066cc', '#d4af37'],
+                patterns: ['circle', 'shield', 'star']
+            },
+            wisdom: {
+                primaryPools: ['hermetic', 'mystical'],
+                colors: ['#6a4c93', '#d4af37', '#0066cc'],
+                patterns: ['tree', 'eye', 'book']
+            },
+            healing: {
+                primaryPools: ['alchemical', 'mystical'],
+                colors: ['#87a96b', '#d4af37', '#722f37'],
+                patterns: ['cross', 'spiral', 'flower']
+            },
+            manifestation: {
+                primaryPools: ['geometric', 'astrological'],
+                colors: ['#d4af37', '#6a4c93', '#722f37'],
+                patterns: ['pentagon', 'star', 'mandala']
+            },
+            divination: {
+                primaryPools: ['mystical', 'runic'],
+                colors: ['#6a4c93', '#0066cc', '#d4af37'],
+                patterns: ['circle', 'triangle', 'eye']
+            },
+            balance: {
+                primaryPools: ['hermetic', 'geometric'],
+                colors: ['#87a96b', '#d4af37', '#0066cc'],
+                patterns: ['scales', 'yin-yang', 'square']
+            },
+            transcendence: {
+                primaryPools: ['astrological', 'mystical'],
+                colors: ['#d4af37', '#6a4c93', '#87a96b'],
+                patterns: ['spiral', 'triangle', 'star']
+            }
+        };
+        
+        const glyphNames = {
+            prefixes: ["Astra", "Lumi", "Theos", "Arcana", "Mystica", "Prima", "Sancta", "Vera", "Opus", "Magna"],
+            suffixes: ["glyph", "sigil", "mandala", "seal", "cipher", "rune", "symbol", "mark", "sign", "emblem"]
+        };
+        
+        let galleryStorage = JSON.parse(localStorage.getItem('glyphGallery')) || [];
+        let currentGlyph = null;
+        
+        function initializeParticles() {
+            const container = document.getElementById('cosmicParticles');
+            for (let i = 0; i < 50; i++) {
+                const particle = document.createElement('div');
+                particle.className = 'particle';
+                particle.style.left = Math.random() * 100 + '%';
+                particle.style.animationDelay = Math.random() * 8 + 's';
+                particle.style.animationDuration = (Math.random() * 10 + 5) + 's';
+                container.appendChild(particle);
+            }
+        }
+        
+        function generateGlyph() {
+            const svg = document.getElementById("glyphSvg");
+            const info = document.getElementById("glyphInfo");
+            
+            // Show loading state
+            info.classList.add('loading');
+            svg.innerHTML = "";
+            
+            setTimeout(() => {
+                const intention = document.getElementById('intentionSelect').value;
+                const complexity = parseInt(document.getElementById('complexitySlider').value);
+                const config = intentionConfigs[intention];
+                
+                const centerX = 200;
+                const centerY = 200;
+                
+                // Create background pattern
+                createBackgroundPattern(svg, config, centerX, centerY);
+                
+                // Generate primary symbols based on complexity
+                const symbolCount = Math.min(complexity * 2 + 2, 12);
+                const symbols = generateSymbolSet(config.primaryPools, symbolCount);
+                
+                // Arrange symbols in sacred geometry patterns
+                arrangeSacredGeometry(svg, symbols, config, centerX, centerY, complexity);
+                
+                // Add connecting lines and geometric elements
+                addGeometricElements(svg, config, centerX, centerY, complexity);
+                
+                // Generate glyph metadata
+                const glyphData = generateGlyphMetadata(intention, complexity, symbols);
+                
+                // Update info panel
+                updateGlyphInfo(glyphData);
+                
+                // Store in gallery
+                addToGallery(glyphData, svg.innerHTML);
+                
+                info.classList.remove('loading');
+                currentGlyph = glyphData;
+            }, 1000);
+        }
+        
+        function createBackgroundPattern(svg, config, centerX, centerY) {
+            const bgCircle = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+            bgCircle.setAttribute("cx", centerX);
+            bgCircle.setAttribute("cy", centerY);
+            bgCircle.setAttribute("r", 180);
+            bgCircle.setAttribute("fill", "none");
+            bgCircle.setAttribute("stroke", config.colors[0]);
+            bgCircle.setAttribute("stroke-width", "1");
+            bgCircle.setAttribute("opacity", "0.3");
+            svg.appendChild(bgCircle);
+            
+            // Add inner circles for sacred geometry
+            for (let i = 1; i <= 3; i++) {
+                const circle = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+                circle.setAttribute("cx", centerX);
+                circle.setAttribute("cy", centerY);
+                circle.setAttribute("r", 60 * i);
+                circle.setAttribute("fill", "none");
+                circle.setAttribute("stroke", config.colors[i % config.colors.length]);
+                circle.setAttribute("stroke-width", "1");
+                circle.setAttribute("opacity", "0.2");
+                svg.appendChild(circle);
+            }
+        }
+        
+        function generateSymbolSet(pools, count) {
+            const symbols = [];
+            const availableSymbols = [];
+            
+            pools.forEach(pool => {
+                availableSymbols.push(...symbolPools[pool]);
+            });
+            
+            for (let i = 0; i < count; i++) {
+                const randomSymbol = availableSymbols[Math.floor(Math.random() * availableSymbols.length)];
+                symbols.push(randomSymbol);
+            }
+            
+            return symbols;
+        }
+        
+        function arrangeSacredGeometry(svg, symbols, config, centerX, centerY, complexity) {
+            const arrangements = [
+                'circle', 'star', 'spiral', 'mandala', 'cross'
+            ];
+            
+            const arrangement = arrangements[Math.floor(Math.random() * arrangements.length)];
+            
+            switch (arrangement) {
+                case 'circle':
+                    arrangeInCircle(svg, symbols, config, centerX, centerY);
+                    break;
+                case 'star':
+                    arrangeInStar(svg, symbols, config, centerX, centerY);
+                    break;
+                case 'spiral':
+                    arrangeInSpiral(svg, symbols, config, centerX, centerY);
+                    break;
+                case 'mandala':
+                    arrangeInMandala(svg, symbols, config, centerX, centerY, complexity);
+                    break;
+                case 'cross':
+                    arrangeInCross(svg, symbols, config, centerX, centerY);
+                    break;
+            }
+        }
+        
+        function arrangeInCircle(svg, symbols, config, centerX, centerY) {
+            symbols.forEach((symbol, i) => {
+                const angle = (i * 360) / symbols.length;
+                const rad = (angle * Math.PI) / 180;
+                const radius = 120;
+                const x = centerX + radius * Math.cos(rad);
+                const y = centerY + radius * Math.sin(rad);
+                
+                createSymbolElement(svg, symbol, x, y, config.colors[i % config.colors.length]);
+            });
+        }
+        
+        function arrangeInStar(svg, symbols, config, centerX, centerY) {
+            const points = Math.min(symbols.length, 8);
+            symbols.slice(0, points).forEach((symbol, i) => {
+                const angle = (i * 360) / points;
+                const rad = (angle * Math.PI) / 180;
+                const radius = i % 2 === 0 ? 140 : 80;
+                const x = centerX + radius * Math.cos(rad);
+                const y = centerY + radius * Math.sin(rad);
+                
+                createSymbolElement(svg, symbol, x, y, config.colors[i % config.colors.length]);
+            });
+        }
+        
+        function arrangeInSpiral(svg, symbols, config, centerX, centerY) {
+            symbols.forEach((symbol, i) => {
+                const angle = i * 45;
+                const rad = (angle * Math.PI) / 180;
+                const radius = 30 + i * 15;
+                const x = centerX + radius * Math.cos(rad);
+                const y = centerY + radius * Math.sin(rad);
+                
+                createSymbolElement(svg, symbol, x, y, config.colors[i % config.colors.length]);
+            });
+        }
+        
+        function arrangeInMandala(svg, symbols, config, centerX, centerY, complexity) {
+            // Center symbol
+            if (symbols.length > 0) {
+                createSymbolElement(svg, symbols[0], centerX, centerY, config.colors[0], 32);
+            }
+            
+            // Rings of symbols
+            const rings = Math.min(complexity, 3);
+            let symbolIndex = 1;
+            
+            for (let ring = 1; ring <= rings && symbolIndex < symbols.length; ring++) {
+                const symbolsInRing = Math.min(ring * 6, symbols.length - symbolIndex);
+                const radius = ring * 60;
+                
+                for (let i = 0; i < symbolsInRing && symbolIndex < symbols.length; i++) {
+                    const angle = (i * 360) / symbolsInRing;
+                    const rad = (angle * Math.PI) / 180;
+                    const x = centerX + radius * Math.cos(rad);
+                    const y = centerY + radius * Math.sin(rad);
+                    
+                    createSymbolElement(svg, symbols[symbolIndex], x, y, config.colors[symbolIndex % config.colors.length]);
+                    symbolIndex++;
+                }
+            }
+        }
+        
+        function arrangeInCross(svg, symbols, config, centerX, centerY) {
+            // Center
+            if (symbols.length > 0) {
+                createSymbolElement(svg, symbols[0], centerX, centerY, config.colors[0], 28);
+            }
+            
+            // Four directions
+            const positions = [
+                [centerX, centerY - 100], // North
+                [centerX + 100, centerY], // East
+                [centerX, centerY + 100], // South
+                [centerX - 100, centerY]  // West
+            ];
+            
+            positions.forEach((pos, i) => {
+                if (i + 1 < symbols.length) {
+                    createSymbolElement(svg, symbols[i + 1], pos[0], pos[1], config.colors[(i + 1) % config.colors.length]);
+                }
+            });
+        }
+        
+        function createSymbolElement(svg, symbol, x, y, color, size = 24) {
+            const text = document.createElementNS("http://www.w3.org/2000/svg", "text");
+            text.setAttribute("x", x);
+            text.setAttribute("y", y);
+            text.setAttribute("fill", color);
+            text.setAttribute("font-size", size);
+            text.setAttribute("text-anchor", "middle");
+            text.setAttribute("alignment-baseline", "middle");
+            text.setAttribute("filter", "drop-shadow(0 0 5px " + color + ")");
+            text.textContent = symbol;
+            
+            // Add subtle animation
+            const animateTransform = document.createElementNS("http://www.w3.org/2000/svg", "animateTransform");
+            animateTransform.setAttribute("attributeName", "transform");
+            animateTransform.setAttribute("attributeType", "XML");
+            animateTransform.setAttribute("type", "rotate");
+            animateTransform.setAttribute("from", "0 " + x + " " + y);
+            animateTransform.setAttribute("to", "360 " + x + " " + y);
+            animateTransform.setAttribute("dur", (Math.random() * 20 + 10) + "s");
+            animateTransform.setAttribute("repeatCount", "indefinite");
+            
+            text.appendChild(animateTransform);
+            svg.appendChild(text);
+        }
+        
+        function addGeometricElements(svg, config, centerX, centerY, complexity) {
+            // Add connecting lines between symbols
+            if (complexity >= 3) {
+                const lines = Math.min(complexity * 2, 8);
+                for (let i = 0; i

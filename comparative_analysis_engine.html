@@ -1,0 +1,757 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Comparative Analysis Engine</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600&family=Crimson+Pro:ital,wght@0,300;0,400;0,600;1,400&family=Source+Code+Pro:wght@400;600&display=swap');
+        
+        :root {
+            --gold: #d4af37;
+            --deep-blue: #1a1a2e;
+            --burgundy: #722f37;
+            --cream: #f5f5dc;
+            --shadow: rgba(212, 175, 55, 0.3);
+            --dark-gold: #b8941f;
+            --midnight: #0f0f23;
+            --electric-blue: #0066cc;
+            --sage-green: #87a96b;
+            --mystic-purple: #6a4c93;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Crimson Pro', serif;
+            background: linear-gradient(135deg, var(--midnight) 0%, var(--deep-blue) 30%, var(--burgundy) 70%, #2a1810 100%);
+            color: var(--cream);
+            line-height: 1.6;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+        
+        .cosmic-grid {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            opacity: 0.03;
+            background-image: 
+                linear-gradient(rgba(212, 175, 55, 0.1) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(212, 175, 55, 0.1) 1px, transparent 1px);
+            background-size: 50px 50px;
+            animation: grid-shift 30s linear infinite;
+        }
+        
+        @keyframes grid-shift {
+            from { transform: translate(0, 0); }
+            to { transform: translate(50px, 50px); }
+        }
+        
+        .container {
+            max-width: 1600px;
+            margin: 0 auto;
+            padding: 20px;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .header {
+            text-align: center;
+            padding: 40px 0;
+            margin-bottom: 40px;
+            position: relative;
+        }
+        
+        .header::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 400px;
+            height: 200px;
+            background: radial-gradient(ellipse, var(--shadow) 0%, transparent 70%);
+            z-index: -1;
+        }
+        
+        .title {
+            font-family: 'Cinzel', serif;
+            font-size: 3.5rem;
+            font-weight: 600;
+            color: var(--gold);
+            text-shadow: 3px 3px 6px rgba(0,0,0,0.7);
+            margin-bottom: 15px;
+            letter-spacing: 2px;
+        }
+        
+        .subtitle {
+            font-size: 1.4rem;
+            color: var(--cream);
+            font-style: italic;
+            opacity: 0.9;
+            margin-bottom: 30px;
+        }
+        
+        .control-panel {
+            background: linear-gradient(135deg, rgba(26, 26, 46, 0.9), rgba(114, 47, 55, 0.8));
+            border: 2px solid var(--gold);
+            border-radius: 20px;
+            padding: 30px;
+            margin-bottom: 40px;
+            backdrop-filter: blur(10px);
+        }
+        
+        .concept-selector {
+            margin-bottom: 30px;
+        }
+        
+        .concept-selector h3 {
+            font-family: 'Cinzel', serif;
+            color: var(--gold);
+            margin-bottom: 20px;
+            font-size: 1.3rem;
+            text-align: center;
+        }
+        
+        .concept-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+        }
+        
+        .concept-card {
+            background: rgba(26, 26, 46, 0.6);
+            border: 2px solid transparent;
+            border-radius: 12px;
+            padding: 20px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .concept-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, var(--shadow), transparent);
+            transition: left 0.5s ease;
+        }
+        
+        .concept-card:hover {
+            border-color: var(--gold);
+            transform: translateY(-3px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.3);
+        }
+        
+        .concept-card:hover::before {
+            left: 100%;
+        }
+        
+        .concept-card.selected {
+            border-color: var(--gold);
+            background: rgba(212, 175, 55, 0.2);
+            box-shadow: 0 0 20px var(--shadow);
+        }
+        
+        .concept-icon {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            color: var(--gold);
+        }
+        
+        .concept-name {
+            font-family: 'Cinzel', serif;
+            font-weight: 600;
+            font-size: 1.1rem;
+            color: var(--cream);
+        }
+        
+        .thinker-selector {
+            margin-bottom: 30px;
+        }
+        
+        .thinker-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+        }
+        
+        .thinker-card {
+            background: linear-gradient(135deg, rgba(106, 76, 147, 0.3), rgba(135, 169, 107, 0.3));
+            border: 2px solid transparent;
+            border-radius: 15px;
+            padding: 25px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+        
+        .thinker-card:hover,
+        .thinker-card.selected {
+            border-color: var(--gold);
+            transform: scale(1.02);
+            box-shadow: 0 15px 30px rgba(0,0,0,0.3);
+        }
+        
+        .thinker-portrait {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background: var(--gold);
+            margin: 0 auto 15px auto;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2.5rem;
+            font-weight: bold;
+            color: var(--deep-blue);
+            border: 3px solid var(--cream);
+        }
+        
+        .thinker-name {
+            font-family: 'Cinzel', serif;
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: var(--cream);
+            margin-bottom: 8px;
+        }
+        
+        .thinker-dates {
+            font-size: 0.9rem;
+            color: var(--gold);
+            opacity: 0.8;
+            margin-bottom: 10px;
+        }
+        
+        .thinker-tradition {
+            font-size: 0.8rem;
+            color: var(--cream);
+            opacity: 0.7;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        .interpretation-slider {
+            margin-bottom: 30px;
+        }
+        
+        .slider-container {
+            position: relative;
+            margin: 20px 0;
+        }
+        
+        .slider {
+            width: 100%;
+            height: 8px;
+            border-radius: 4px;
+            background: linear-gradient(90deg, var(--mystic-purple), var(--electric-blue), var(--sage-green), var(--gold));
+            outline: none;
+            -webkit-appearance: none;
+            position: relative;
+        }
+        
+        .slider::-webkit-slider-thumb {
+            appearance: none;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            background: var(--cream);
+            border: 3px solid var(--gold);
+            cursor: pointer;
+            box-shadow: 0 0 10px rgba(0,0,0,0.3);
+        }
+        
+        .slider::-moz-range-thumb {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            background: var(--cream);
+            border: 3px solid var(--gold);
+            cursor: pointer;
+        }
+        
+        .slider-labels {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 10px;
+            font-size: 0.9rem;
+            color: var(--cream);
+        }
+        
+        .slider-label {
+            text-align: center;
+            padding: 5px;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+        }
+        
+        .slider-label.active {
+            background: var(--gold);
+            color: var(--deep-blue);
+            font-weight: 600;
+        }
+        
+        .analysis-display {
+            background: linear-gradient(135deg, rgba(26, 26, 46, 0.95), rgba(114, 47, 55, 0.9));
+            border: 3px solid var(--gold);
+            border-radius: 20px;
+            padding: 40px;
+            backdrop-filter: blur(15px);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .analysis-display::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, var(--shadow) 0%, transparent 50%);
+            opacity: 0.1;
+            animation: slow-rotate 60s linear infinite;
+        }
+        
+        @keyframes slow-rotate {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+        
+        .comparison-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 30px;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .thinker-analysis {
+            background: rgba(26, 26, 46, 0.8);
+            border: 2px solid var(--gold);
+            border-radius: 15px;
+            padding: 25px;
+            backdrop-filter: blur(5px);
+            transition: all 0.3s ease;
+        }
+        
+        .thinker-analysis:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 30px rgba(0,0,0,0.4);
+        }
+        
+        .analysis-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid var(--gold);
+        }
+        
+        .analysis-portrait {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: var(--gold);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: var(--deep-blue);
+            margin-right: 15px;
+        }
+        
+        .analysis-thinker-info h4 {
+            font-family: 'Cinzel', serif;
+            color: var(--gold);
+            font-size: 1.2rem;
+            margin-bottom: 5px;
+        }
+        
+        .analysis-tradition {
+            font-size: 0.9rem;
+            color: var(--cream);
+            opacity: 0.7;
+        }
+        
+        .analysis-content {
+            font-size: 1.1rem;
+            line-height: 1.8;
+            color: var(--cream);
+        }
+        
+        .analysis-quote {
+            background: rgba(212, 175, 55, 0.1);
+            border-left: 4px solid var(--gold);
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 0 8px 8px 0;
+            font-style: italic;
+            position: relative;
+        }
+        
+        .analysis-quote::before {
+            content: '"';
+            font-size: 3rem;
+            color: var(--gold);
+            position: absolute;
+            top: -5px;
+            left: 10px;
+            opacity: 0.3;
+        }
+        
+        .convergence-analysis {
+            grid-column: 1 / -1;
+            background: linear-gradient(135deg, rgba(106, 76, 147, 0.4), rgba(135, 169, 107, 0.4));
+            border: 3px solid var(--gold);
+            border-radius: 20px;
+            padding: 30px;
+            margin-top: 20px;
+            text-align: center;
+        }
+        
+        .convergence-analysis h3 {
+            font-family: 'Cinzel', serif;
+            color: var(--gold);
+            font-size: 1.5rem;
+            margin-bottom: 20px;
+        }
+        
+        .convergence-content {
+            font-size: 1.1rem;
+            line-height: 1.8;
+        }
+        
+        .no-selection {
+            text-align: center;
+            padding: 60px 20px;
+            color: var(--cream);
+            opacity: 0.7;
+        }
+        
+        .no-selection .icon {
+            font-size: 4rem;
+            color: var(--gold);
+            margin-bottom: 20px;
+        }
+        
+        .connection-lines {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 0;
+        }
+        
+        .connection-line {
+            position: absolute;
+            height: 2px;
+            background: linear-gradient(90deg, var(--gold), transparent, var(--gold));
+            opacity: 0.3;
+            animation: pulse-line 3s ease-in-out infinite;
+        }
+        
+        @keyframes pulse-line {
+            0%, 100% { opacity: 0.3; }
+            50% { opacity: 0.7; }
+        }
+        
+        @media (max-width: 768px) {
+            .title {
+                font-size: 2.5rem;
+            }
+            
+            .concept-grid,
+            .thinker-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .comparison-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .control-panel {
+                padding: 20px;
+            }
+        }
+        
+        .loading-animation {
+            display: none;
+            text-align: center;
+            padding: 40px;
+        }
+        
+        .loading-spinner {
+            width: 60px;
+            height: 60px;
+            border: 4px solid rgba(212, 175, 55, 0.3);
+            border-top: 4px solid var(--gold);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px auto;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <div class="cosmic-grid"></div>
+    
+    <div class="container">
+        <header class="header">
+            <h1 class="title">The Comparative Analysis Engine</h1>
+            <p class="subtitle">Explore How Great Minds Interpreted Universal Concepts</p>
+        </header>
+        
+        <div class="control-panel">
+            <div class="concept-selector">
+                <h3>🔮 Select a Concept to Explore</h3>
+                <div class="concept-grid" id="conceptGrid">
+                    <!-- Concepts will be populated by JavaScript -->
+                </div>
+            </div>
+            
+            <div class="thinker-selector">
+                <h3>🧙‍♂️ Choose Thinkers to Compare</h3>
+                <div class="thinker-grid" id="thinkerGrid">
+                    <!-- Thinkers will be populated by JavaScript -->
+                </div>
+            </div>
+            
+            <div class="interpretation-slider">
+                <h3 style="font-family: 'Cinzel', serif; color: var(--gold); text-align: center; margin-bottom: 20px;">
+                    🌊 Interpretation Perspective
+                </h3>
+                <div class="slider-container">
+                    <input type="range" min="0" max="3" value="0" class="slider" id="perspectiveSlider">
+                    <div class="slider-labels">
+                        <span class="slider-label active" data-value="0">Symbolic</span>
+                        <span class="slider-label" data-value="1">Historical</span>
+                        <span class="slider-label" data-value="2">Psychological</span>
+                        <span class="slider-label" data-value="3">Mystical</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="analysis-display">
+            <div class="connection-lines" id="connectionLines"></div>
+            
+            <div class="loading-animation" id="loadingAnimation">
+                <div class="loading-spinner"></div>
+                <p>Synthesizing perspectives across the ages...</p>
+            </div>
+            
+            <div class="no-selection" id="noSelection">
+                <div class="icon">🔍</div>
+                <h3>Select a concept and thinkers to begin your comparative analysis</h3>
+                <p>Discover how different minds approached the same eternal questions</p>
+            </div>
+            
+            <div class="comparison-grid" id="comparisonGrid" style="display: none;">
+                <!-- Analysis results will be populated here -->
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        // Database of concepts with interpretations from different thinkers
+        const conceptsDatabase = {
+            reincarnation: {
+                name: "Reincarnation",
+                icon: "🔄",
+                thinkers: {
+                    hall: {
+                        symbolic: "The soul's journey through the 'wheel of necessity,' each incarnation offering symbolic lessons for spiritual development.",
+                        historical: "Drawing from Egyptian mysteries and Platonic philosophy, reincarnation represents the soul's education through material experience.",
+                        psychological: "The process by which consciousness evolves through different personality vehicles, accumulating wisdom.",
+                        mystical: "The divine spark returning repeatedly to physical form until it achieves perfect union with the cosmic consciousness.",
+                        quote: "The soul is genderless and transcends all earthly differentiations, evolving through multiple incarnations."
+                    },
+                    blavatsky: {
+                        symbolic: "The pilgrimage of the divine monad through the seven planes of existence, each life a chapter in cosmic evolution.",
+                        historical: "Ancient wisdom preserved in Hindu and Buddhist traditions, corrupted by materialistic interpretations in the West.",
+                        psychological: "The ego-soul's development through karmic experiences, guided by the higher self toward final liberation.",
+                        mystical: "The return of the divine ray to its source, each incarnation purifying the lower principles until only spirit remains.",
+                        quote: "It is not the soul that is born again and again, but the personality that wears out many souls."
+                    },
+                    jung: {
+                        symbolic: "The archetypal pattern of death and rebirth manifesting in individual psychological development.",
+                        historical: "A universal symbol found across cultures, representing the psyche's need for renewal and transformation.",
+                        psychological: "The ego's experience of multiple 'deaths' and rebirths throughout a single lifetime, integrating shadow aspects.",
+                        mystical: "The individuation process as a form of reincarnation within one life, each phase revealing deeper aspects of the Self.",
+                        quote: "The privilege of a lifetime is to become who you truly are through the many deaths of who you thought you were."
+                    },
+                    steiner: {
+                        symbolic: "The 'I-being' descending through the astral, etheric, and physical bodies to gain earthly experience.",
+                        historical: "A scientific-spiritual fact observable through developed clairvoyance, not mere belief or philosophy.",
+                        psychological: "The development of consciousness through successive earth-lives, building moral and intellectual capacities.",
+                        mystical: "The path of the human spirit from divine origins back to cosmic consciousness through material incarnation.",
+                        quote: "Between death and a new birth, the soul prepares the conditions for its next earthly existence."
+                    }
+                }
+            },
+            alchemy: {
+                name: "Alchemy",
+                icon: "🧪",
+                thinkers: {
+                    hall: {
+                        symbolic: "The transformation of the base metals of human consciousness into the gold of spiritual enlightenment.",
+                        historical: "The secret doctrine of ancient Egypt and Greece, preserved through Arab scholars and medieval mystics.",
+                        psychological: "The systematic purification of the soul through the dissolution and reintegration of psychological elements.",
+                        mystical: "The divine science of regeneration, where spirit learns to master and transmute matter through will and knowledge.",
+                        quote: "Alchemy is the process of transforming the lead of base consciousness into the gold of enlightenment."
+                    },
+                    jung: {
+                        symbolic: "A symbolic system representing the individuation process and the integration of unconscious contents.",
+                        historical: "The historical bridge between ancient religious symbolism and modern psychological understanding.",
+                        psychological: "The projection of unconscious psychological processes onto chemical operations, revealing inner transformation.",
+                        mystical: "The opus contra naturam - work against nature - representing consciousness emerging from unconscious matter.",
+                        quote: "Alchemy is the projection of a drama both cosmic and spiritual in laboratory terms."
+                    },
+                    paracelsus: {
+                        symbolic: "The marriage of heaven and earth through the physician's art, healing as cosmic restoration.",
+                        historical: "The true medicine combining spiritual wisdom with natural philosophy and chemical knowledge.",
+                        psychological: "The transformation of the physician's own nature as prerequisite for healing others effectively.",
+                        mystical: "The direct participation in divine creativity through understanding the signatures and correspondences of nature.",
+                        quote: "The physician must be born of God and of nature, and must learn from both the visible and invisible worlds."
+                    },
+                    newton: {
+                        symbolic: "The mathematical description of natural forces and the hidden geometric principles governing matter.",
+                        historical: "The experimental method applied to ancient wisdom, seeking to verify alchemical claims through rigorous testing.",
+                        psychological: "The disciplined pursuit of knowledge as a form of spiritual purification and mental clarity.",
+                        mystical: "The revelation of God's mind through the study of natural laws and the transformation of matter.",
+                        quote: "To make gold, one must have gold - the divine spark within must first be awakened and purified."
+                    }
+                }
+            },
+            consciousness: {
+                name: "Consciousness",
+                icon: "🧠",
+                thinkers: {
+                    hall: {
+                        symbolic: "The divine light imprisoned in matter, seeking to awaken to its true nature through experience.",
+                        historical: "The central mystery of all ancient wisdom traditions, hidden in symbols and preserved by initiates.",
+                        psychological: "The evolution of awareness from instinctual to intellectual to spiritual levels of perception.",
+                        mystical: "The cosmic mind individualized, temporarily forgetting its divinity to learn through limitation and rediscover its infinity.",
+                        quote: "Consciousness is the light of the divine self, temporarily veiled by the illusions of material existence."
+                    },
+                    blavatsky: {
+                        symbolic: "The reflection of universal consciousness in the mirror of individual experience, creating the illusion of separation.",
+                        historical: "The secret teaching of all mysteries: consciousness is the fundamental reality from which all appearances emerge.",
+                        psychological: "The play of maya or illusion, where the one consciousness appears as many through the veils of manifestation.",
+                        mystical: "The eternal witness that never changes, observing the dance of forms while remaining unaffected by their transformation.",
+                        quote: "Consciousness is the only reality; all else is but its shadow cast upon the screen of time."
+                    },
+                    jung: {
+                        symbolic: "The emergent property of the psyche's self-organization, creating meaning through symbolic representation.",
+                        historical: "The evolutionary development from unconscious participation mystique to individual ego-consciousness.",
+                        psychological: "The ongoing dialogue between conscious and unconscious contents, mediated by symbols and active imagination.",
+                        mystical: "The Self's attempt to know itself through the ego's experience, gradually expanding awareness toward totality.",
+                        quote: "Consciousness is like a narrow window looking out on infinite spaces that remain largely unknown."
+                    },
+                    gurdjieff: {
+                        symbolic: "The result of conscious labor and intentional suffering, developed through work against mechanical habits.",
+                        historical: "The lost capacity of ancient humanity, gradually diminished through civilization's hypnotic influence.",
+                        psychological: "The state of being awake to oneself, observing one's thoughts, emotions, and sensations without identification.",
+                        mystical: "The crystallization of higher being-substances through the transmutation of energies in the human organism.",
+                        quote: "Man is a machine, but he can become conscious through work on himself and remembering his true nature."
+                    }
+                }
+            },
+            kabbalah: {
+                name: "Kabbalah",
+                icon: "🌳",
+                thinkers: {
+                    hall: {
+                        symbolic: "The cosmic tree showing the descent of spirit into matter and its return through the sephirotic paths.",
+                        historical: "The secret doctrine of Israel, preserving the ancient wisdom of creation and the divine plan.",
+                        psychological: "The map of human consciousness in its various levels, from material awareness to divine union.",
+                        mystical: "The blueprint of creation itself, revealing how the infinite becomes finite and returns to its source.",
+                        quote: "The Tree of Life is the divine anatomy of man and cosmos, the ladder of return to the eternal."
+                    },
+                    blavatsky: {
+                        symbolic: "One expression of the universal wisdom-tradition, parallel to Hindu and Egyptian mysteries.",
+                        historical: "The Chaldean and Egyptian wisdom adapted to Hebrew mysticism, containing genuine esoteric knowledge.",
+                        psychological: "The symbolic representation of cosmic and human evolution through the interplay of divine principles.",
+                        mystical: "The sevenfold constitution of man and universe, veiled in Hebrew symbolism but universal in application.",
+                        quote: "The Kabbalah is but one of many keys to the same universal mysteries taught in all true traditions."
+                    },
+                    scholem: {
+                        symbolic: "The symbolic language through which Jewish mystics expressed their encounters with the divine.",
+                        historical: "The historical development of Jewish mysticism from ancient gnosis to medieval systematization.",
+                        psychological: "The projection of inner spiritual states onto cosmic structures and divine emanations.",
+                        mystical: "The authentic tradition of Jewish mystical experience, distinct from philosophical theology.",
+                        quote: "The Kabbalah represents the authentic voice of Jewish mystical experience throughout the centuries."
+                    },
+                    crowley: {
+                        symbolic: "The western system of magick and mysticism, adaptable to individual spiritual development.",
+                        historical: "The foundation of modern western occultism, synthesized with eastern and ancient wisdom.",
+                        psychological: "The systematic mapping of consciousness for the purpose of magical and mystical attainment.",
+                        mystical: "The scientific method applied to mystical states, providing reproducible techniques for spiritual development.",
+                        quote: "The Tree of Life is the most perfect system yet devised for the classification of all phenomena."
+                    }
+                }
+            },
+            sacredgeometry: {
+                name: "Sacred Geometry",
+                icon: "📐",
+                thinkers: {
+                    hall: {
+                        symbolic: "The divine mathematics underlying all creation, revealing the archetypal patterns of manifestation.",
+                        historical: "The secret science of the ancient temple builders, encoding cosmic wisdom in architectural proportions.",
+                        psychological: "The harmony of form that resonates with the soul's innate sense of beauty and proportion.",
+                        mystical: "The visual language of the divine architect, showing how spirit organizes matter through geometric principles.",
+                        quote: "Geometry is the divine art by which the infinite expresses itself through finite forms of perfect proportion."
+                    },
+                    pythagoras: {
+                        symbolic: "The numerical relationships that govern harmony in music, mathematics, and the cosmos.",
+                        historical: "The mathematical basis of all natural phenomena, discovered through contemplation and experimentation.",
+                        psychological: "The training of the mind to perceive order and beauty as expressions of divine intelligence.",
+                        mystical: "The pathway to understanding the divine mind through the study of number, proportion, and harmony.",
+                        quote: "Number is the ruler of forms and ideas, and the cause of gods and daemons."
+                    },
+                    plato: {
+                        symbolic: "The eternal forms or ideas that serve as perfect templates for all material manifestations.",
+                        historical: "The mathematical basis of the ideal state and the philosopher's education in eternal truth.",
+                        psychological: "The soul's recognition of eternal patterns, awakening memory of its divine origin.",
+                        mystical: "The ladder of ascent from material appearances to the contemplation of eternal geometric perfection.",
+                        quote: "God always geometrizes - the eternal patterns are the source of all temporal beauty."
+                    },
+                    leonardo: {
+                        symbolic: "The mathematical harmony underlying both human anatomy and natural phenomena.",
+                        historical: "The rediscovery of ancient proportional systems through direct observation and measurement.",
+                        psychological: "The artist's vision of the divine perfection reflected in natural forms and human beauty.",
+                        mystical: "The revelation of divine creativity through the study of nature's geometric patterns and proportions.",
+                        quote: "The eye delights in proportion and harmony because it recognizes the divine order within natural forms."
+                    }
+                }
+            }
+        };
+        
+        // Thinkers database
+        const thinkersDatabase = {
+            hall: {
+                name: "Manly P. Hall",
+                dates: "1901-1990",
+                tradition: "Perennial Philosophy",

@@ -1,0 +1,734 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Hermetic Lexicon - Symbol Dictionary</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600&family=Crimson+Pro:ital,wght@0,300;0,400;0,600;1,400&family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&display=swap');
+        
+        :root {
+            --gold: #d4af37;
+            --deep-blue: #1a1a2e;
+            --burgundy: #722f37;
+            --cream: #f5f5dc;
+            --shadow: rgba(212, 175, 55, 0.3);
+            --dark-gold: #b8941f;
+            --midnight: #0f0f23;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Crimson Pro', serif;
+            background: radial-gradient(ellipse at center, var(--midnight) 0%, var(--deep-blue) 40%, var(--burgundy) 100%);
+            color: var(--cream);
+            line-height: 1.7;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+        
+        .cosmic-background {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -2;
+            opacity: 0.1;
+            background-image: 
+                radial-gradient(2px 2px at 20px 30px, var(--gold), transparent),
+                radial-gradient(2px 2px at 40px 70px, var(--gold), transparent),
+                radial-gradient(1px 1px at 90px 40px, var(--gold), transparent),
+                radial-gradient(1px 1px at 130px 80px, var(--gold), transparent),
+                radial-gradient(2px 2px at 160px 30px, var(--gold), transparent);
+            background-repeat: repeat;
+            background-size: 200px 100px;
+            animation: stars 20s linear infinite;
+        }
+        
+        @keyframes stars {
+            from { transform: translateY(0); }
+            to { transform: translateY(-100px); }
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .header {
+            text-align: center;
+            padding: 40px 0;
+            margin-bottom: 40px;
+            position: relative;
+        }
+        
+        .header::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 300px;
+            height: 300px;
+            background: radial-gradient(circle, var(--shadow) 0%, transparent 70%);
+            border-radius: 50%;
+            z-index: -1;
+        }
+        
+        .title {
+            font-family: 'Cinzel', serif;
+            font-size: 3.5rem;
+            font-weight: 600;
+            color: var(--gold);
+            text-shadow: 3px 3px 6px rgba(0,0,0,0.7);
+            margin-bottom: 15px;
+            letter-spacing: 3px;
+        }
+        
+        .subtitle {
+            font-family: 'Libre Baskerville', serif;
+            font-size: 1.3rem;
+            color: var(--cream);
+            font-style: italic;
+            opacity: 0.9;
+        }
+        
+        .search-container {
+            position: relative;
+            max-width: 600px;
+            margin: 0 auto 40px auto;
+        }
+        
+        .search-input {
+            width: 100%;
+            padding: 15px 50px 15px 20px;
+            font-size: 1.1rem;
+            border: 2px solid var(--gold);
+            border-radius: 25px;
+            background: rgba(26, 26, 46, 0.8);
+            color: var(--cream);
+            backdrop-filter: blur(10px);
+            transition: all 0.3s ease;
+        }
+        
+        .search-input:focus {
+            outline: none;
+            box-shadow: 0 0 20px var(--shadow);
+            background: rgba(26, 26, 46, 0.9);
+        }
+        
+        .search-icon {
+            position: absolute;
+            right: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--gold);
+            font-size: 1.2rem;
+        }
+        
+        .filter-tabs {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin-bottom: 40px;
+        }
+        
+        .filter-tab {
+            padding: 10px 20px;
+            border: 2px solid var(--gold);
+            border-radius: 20px;
+            background: transparent;
+            color: var(--cream);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-family: 'Cinzel', serif;
+            font-weight: 600;
+        }
+        
+        .filter-tab.active,
+        .filter-tab:hover {
+            background: var(--gold);
+            color: var(--deep-blue);
+            box-shadow: 0 0 15px var(--shadow);
+        }
+        
+        .symbols-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 25px;
+            margin-bottom: 40px;
+        }
+        
+        .symbol-card {
+            background: linear-gradient(135deg, rgba(26, 26, 46, 0.8), rgba(114, 47, 55, 0.6));
+            border: 2px solid transparent;
+            border-radius: 15px;
+            padding: 25px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.4s ease;
+            position: relative;
+            overflow: hidden;
+            backdrop-filter: blur(5px);
+        }
+        
+        .symbol-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, var(--shadow), transparent);
+            transition: left 0.6s ease;
+        }
+        
+        .symbol-card:hover {
+            border-color: var(--gold);
+            transform: translateY(-5px) scale(1.02);
+            box-shadow: 0 15px 30px rgba(0,0,0,0.3), 0 0 20px var(--shadow);
+        }
+        
+        .symbol-card:hover::before {
+            left: 100%;
+        }
+        
+        .symbol-display {
+            font-size: 4rem;
+            color: var(--gold);
+            margin-bottom: 15px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+            transition: all 0.3s ease;
+        }
+        
+        .symbol-card:hover .symbol-display {
+            transform: scale(1.1) rotate(5deg);
+            filter: drop-shadow(0 0 10px var(--gold));
+        }
+        
+        .symbol-name {
+            font-family: 'Cinzel', serif;
+            font-size: 1.3rem;
+            color: var(--cream);
+            margin-bottom: 10px;
+            font-weight: 600;
+        }
+        
+        .symbol-category {
+            font-size: 0.9rem;
+            color: var(--gold);
+            opacity: 0.8;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.8);
+            backdrop-filter: blur(5px);
+            z-index: 1000;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        
+        .modal.active {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 1;
+        }
+        
+        .modal-content {
+            background: linear-gradient(135deg, var(--deep-blue), var(--burgundy));
+            border: 3px solid var(--gold);
+            border-radius: 20px;
+            padding: 40px;
+            max-width: 800px;
+            max-height: 90vh;
+            overflow-y: auto;
+            position: relative;
+            transform: scale(0.8);
+            transition: transform 0.3s ease;
+        }
+        
+        .modal.active .modal-content {
+            transform: scale(1);
+        }
+        
+        .modal-close {
+            position: absolute;
+            top: 15px;
+            right: 20px;
+            font-size: 2rem;
+            color: var(--gold);
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .modal-close:hover {
+            transform: scale(1.2);
+            text-shadow: 0 0 10px var(--gold);
+        }
+        
+        .modal-symbol {
+            font-size: 6rem;
+            color: var(--gold);
+            text-align: center;
+            margin-bottom: 20px;
+            text-shadow: 3px 3px 6px rgba(0,0,0,0.5);
+            animation: gentle-pulse 3s ease-in-out infinite;
+        }
+        
+        @keyframes gentle-pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+        
+        .modal-title {
+            font-family: 'Cinzel', serif;
+            font-size: 2.5rem;
+            color: var(--gold);
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        
+        .interpretation-tabs {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+        }
+        
+        .interpretation-tab {
+            padding: 8px 16px;
+            border: 1px solid var(--gold);
+            border-radius: 15px;
+            background: transparent;
+            color: var(--cream);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 0.9rem;
+        }
+        
+        .interpretation-tab.active,
+        .interpretation-tab:hover {
+            background: var(--gold);
+            color: var(--deep-blue);
+        }
+        
+        .interpretation-content {
+            display: none;
+        }
+        
+        .interpretation-content.active {
+            display: block;
+        }
+        
+        .interpretation-section {
+            margin-bottom: 25px;
+        }
+        
+        .interpretation-section h4 {
+            color: var(--gold);
+            margin-bottom: 10px;
+            font-family: 'Cinzel', serif;
+        }
+        
+        .rotating-symbol {
+            animation: slow-rotate 20s linear infinite;
+        }
+        
+        @keyframes slow-rotate {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+        
+        .pulsing-symbol {
+            animation: mystical-pulse 2s ease-in-out infinite;
+        }
+        
+        @keyframes mystical-pulse {
+            0%, 100% { 
+                transform: scale(1);
+                filter: drop-shadow(0 0 5px var(--gold));
+            }
+            50% { 
+                transform: scale(1.1);
+                filter: drop-shadow(0 0 15px var(--gold));
+            }
+        }
+        
+        .related-symbols {
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid var(--gold);
+        }
+        
+        .related-symbols h4 {
+            color: var(--gold);
+            margin-bottom: 15px;
+            font-family: 'Cinzel', serif;
+        }
+        
+        .related-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(80px, 1fr));
+            gap: 15px;
+        }
+        
+        .related-item {
+            text-align: center;
+            padding: 10px;
+            border: 1px solid var(--gold);
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            background: rgba(26, 26, 46, 0.5);
+        }
+        
+        .related-item:hover {
+            background: var(--gold);
+            color: var(--deep-blue);
+            transform: scale(1.05);
+        }
+        
+        .related-item .symbol {
+            font-size: 2rem;
+            margin-bottom: 5px;
+        }
+        
+        .related-item .name {
+            font-size: 0.8rem;
+        }
+        
+        @media (max-width: 768px) {
+            .title {
+                font-size: 2.5rem;
+            }
+            
+            .symbols-grid {
+                grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+                gap: 15px;
+            }
+            
+            .modal-content {
+                margin: 20px;
+                padding: 25px;
+            }
+            
+            .modal-symbol {
+                font-size: 4rem;
+            }
+            
+            .modal-title {
+                font-size: 2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="cosmic-background"></div>
+    
+    <div class="container">
+        <header class="header">
+            <h1 class="title">The Hermetic Lexicon</h1>
+            <p class="subtitle">An Interactive Dictionary of Sacred Symbols & Their Hidden Meanings</p>
+        </header>
+        
+        <div class="search-container">
+            <input type="text" class="search-input" id="searchInput" placeholder="Search symbols, meanings, or traditions...">
+            <span class="search-icon">🔍</span>
+        </div>
+        
+        <div class="filter-tabs">
+            <button class="filter-tab active" data-category="all">All Symbols</button>
+            <button class="filter-tab" data-category="alchemical">Alchemical</button>
+            <button class="filter-tab" data-category="masonic">Masonic</button>
+            <button class="filter-tab" data-category="hermetic">Hermetic</button>
+            <button class="filter-tab" data-category="kabbalistic">Kabbalistic</button>
+            <button class="filter-tab" data-category="astrological">Astrological</button>
+            <button class="filter-tab" data-category="rosicrucian">Rosicrucian</button>
+        </div>
+        
+        <div class="symbols-grid" id="symbolsGrid">
+            <!-- Symbols will be populated by JavaScript -->
+        </div>
+    </div>
+    
+    <!-- Modal for symbol details -->
+    <div class="modal" id="symbolModal">
+        <div class="modal-content">
+            <span class="modal-close" id="modalClose">&times;</span>
+            <div class="modal-symbol" id="modalSymbol"></div>
+            <h2 class="modal-title" id="modalTitle"></h2>
+            
+            <div class="interpretation-tabs">
+                <button class="interpretation-tab active" data-tab="hall">Hall's View</button>
+                <button class="interpretation-tab" data-tab="historical">Historical</button>
+                <button class="interpretation-tab" data-tab="psychological">Psychological</button>
+                <button class="interpretation-tab" data-tab="modern">Modern Usage</button>
+            </div>
+            
+            <div class="interpretation-content active" id="hall">
+                <div class="interpretation-section">
+                    <h4>Manly P. Hall's Interpretation</h4>
+                    <p id="hallText"></p>
+                </div>
+            </div>
+            
+            <div class="interpretation-content" id="historical">
+                <div class="interpretation-section">
+                    <h4>Historical Origins & Development</h4>
+                    <p id="historicalText"></p>
+                </div>
+            </div>
+            
+            <div class="interpretation-content" id="psychological">
+                <div class="interpretation-section">
+                    <h4>Psychological & Archetypal Significance</h4>
+                    <p id="psychologicalText"></p>
+                </div>
+            </div>
+            
+            <div class="interpretation-content" id="modern">
+                <div class="interpretation-section">
+                    <h4>Contemporary Applications & Meaning</h4>
+                    <p id="modernText"></p>
+                </div>
+            </div>
+            
+            <div class="related-symbols">
+                <h4>Related Symbols</h4>
+                <div class="related-grid" id="relatedGrid">
+                    <!-- Related symbols will be populated -->
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        // Symbol database with comprehensive interpretations
+        const symbolsDatabase = [
+            {
+                symbol: "☿",
+                name: "Mercury",
+                category: "alchemical",
+                animation: "pulsing-symbol",
+                hall: "Mercury represents the principle of intelligence and communication, the divine messenger that bridges the material and spiritual realms. Hall saw Mercury as the 'fluid intelligence' that transforms base consciousness into enlightened understanding.",
+                historical: "In ancient alchemy, Mercury was one of the three primes (sulfur, salt, mercury). It represented the volatile spirit that could dissolve and reconstitute matter. The Romans identified it with Hermes, the messenger god.",
+                psychological: "Psychologically, Mercury represents the adaptive mind, quick thinking, and the ability to translate between different levels of consciousness. It embodies the trickster archetype and mental agility.",
+                modern: "In modern esoteric practice, Mercury relates to communication technologies, AI interfaces, and the fluid nature of information. It's relevant to understanding how consciousness interfaces with digital systems.",
+                related: ["♄", "♃", "☾", "☽"]
+            },
+            {
+                symbol: "⚭",
+                name: "Ouroboros",
+                category: "hermetic",
+                animation: "rotating-symbol",
+                hall: "The Ouroboros symbolizes the eternal cycle of destruction and creation, the unity of all opposites. Hall described it as representing 'the self-devouring nature of the universe' and the cyclical nature of time and consciousness.",
+                historical: "First appearing in ancient Egypt, the Ouroboros was adopted by Greek alchemists and later by medieval European mystics. It represents the eternal return and the unity of beginning and end.",
+                psychological: "Represents the eternal cycle of psychological death and rebirth, the integration of shadow and light, and the principle of eternal recurrence in personal development.",
+                modern: "Today, the Ouroboros appears in discussions of feedback loops, recursive systems, and the cyclical nature of technological progress. It's relevant to understanding AI training loops and emergent consciousness.",
+                related: ["☿", "🜃", "△", "☽"]
+            },
+            {
+                symbol: "🜃",
+                name: "Earth Element",
+                category: "alchemical",
+                animation: "",
+                hall: "Earth represents the principle of materialization, the dense physical plane where spirit becomes manifest. Hall taught that understanding Earth is essential for 'bringing heaven down to earth' through practical wisdom.",
+                historical: "One of the four classical elements in Western alchemy and philosophy. Represented stability, permanence, and the physical body. Associated with the direction North and the season of Winter.",
+                psychological: "Symbolizes grounding, practical matters, the body, and material security. Represents the need for stable foundations in psychological development.",
+                modern: "In contemporary spirituality, Earth element relates to environmental consciousness, embodied practices, and the integration of spiritual insights into daily life and social action.",
+                related: ["🜁", "🜂", "🜄", "☿"]
+            },
+            {
+                symbol: "✡",
+                name: "Seal of Solomon",
+                category: "kabbalistic",
+                animation: "pulsing-symbol",
+                hall: "The hexagram represents the perfect balance between the ascending triangle of fire and the descending triangle of water, spirit and matter in eternal equilibrium. Hall called it the 'Star of the Macrocosm.'",
+                historical: "Known as the Magen David in Jewish tradition, but also used in Islamic and Christian mysticism. Associated with King Solomon's wisdom and power over spirits in medieval grimoires.",
+                psychological: "Represents the integration of masculine and feminine principles, conscious and unconscious, the achievement of psychological wholeness through balancing opposites.",
+                modern: "Used in modern magical practice, therapeutic work focusing on integration, and as a symbol of interfaith harmony. Relevant to discussions of polarity and balance in complex systems.",
+                related: ["🔯", "△", "▽", "☾"]
+            },
+            {
+                symbol: "☉",
+                name: "Sol/Sun",
+                category: "astrological",
+                animation: "pulsing-symbol",
+                hall: "The Sun represents the divine spark within humanity, the higher self that seeks to illuminate the darkness of ignorance. Hall described it as 'the spiritual heart' and the source of all vitality and wisdom.",
+                historical: "Central to virtually all ancient spiritual traditions. Worshipped as Ra in Egypt, Helios in Greece, Sol Invictus in Rome. Symbol of divine kingship and enlightenment.",
+                psychological: "Represents the ego in its highest form, individuation, conscious awareness, and the drive toward self-realization. The heroic principle and creative life force.",
+                modern: "In contemporary spirituality, relates to solar consciousness, masculine divine energy, and the cultivation of inner authority. Relevant to leadership, creativity, and authentic self-expression.",
+                related: ["☾", "☿", "♃", "♄"]
+            },
+            {
+                symbol: "☾",
+                name: "Luna/Moon",
+                category: "astrological",
+                animation: "",
+                hall: "The Moon represents the receptive, intuitive principle, the soul's journey through cycles of experience. Hall taught that lunar consciousness is essential for understanding the mysteries of the subconscious mind.",
+                historical: "Universally associated with the feminine divine, cycles of time, death and rebirth. Central to agricultural calendars and mystery religions worldwide.",
+                psychological: "Represents the unconscious, emotional patterns, memory, and intuitive knowing. The anima and the cyclical nature of psychological processes.",
+                modern: "Connected to feminist spirituality, emotional intelligence, biorhythms, and the recognition of non-linear ways of knowing. Relevant to discussions of AI learning cycles.",
+                related: ["☉", "☿", "♀", "♃"]
+            },
+            {
+                symbol: "🔺",
+                name: "Fire Triangle",
+                category: "masonic",
+                animation: "",
+                hall: "The upward-pointing triangle represents the aspiration of consciousness toward the divine, the masculine principle of penetration and enlightenment. Hall identified it with spiritual ambition and the will to transcend.",
+                historical: "One of the most ancient symbols, representing fire, the masculine principle, and divine ascent. Used in Masonic lodges to represent the Master's position and divine authority.",
+                psychological: "Symbolizes directed will, focused intention, and the drive toward transcendence. Represents goal-oriented consciousness and the penetrating insight of awakened mind.",
+                modern: "Used in modern ceremonial magic, meditation practices focusing on aspiration, and as a symbol of technological progress reaching toward transcendent capabilities.",
+                related: ["🔻", "🜃", "✡", "☉"]
+            },
+            {
+                symbol: "🔻",
+                name: "Water Triangle",
+                category: "masonic",
+                animation: "",
+                hall: "The downward triangle represents the descent of spirit into matter, the receptive feminine principle that allows divine wisdom to incarnate in form. Hall called it 'the chalice of receptivity.'",
+                historical: "Represents the element of water, the feminine principle, and divine grace descending. In Masonic symbolism, associated with the receptive aspect of wisdom and the Senior Warden's position.",
+                psychological: "Symbolizes receptivity, emotional depth, the unconscious, and the capacity to receive divine inspiration. Represents surrender and the allowing principle.",
+                modern: "Connected to practices of receptivity, feminine spirituality, and the cultivation of emotional intelligence. Relevant to understanding how consciousness receives and processes information.",
+                related: ["🔺", "☾", "♀", "🜃"]
+            },
+            {
+                symbol: "⚖",
+                name: "Scales of Justice",
+                category: "masonic",
+                animation: "",
+                hall: "The scales represent the cosmic law of balance, the principle of equilibrium that governs both the material and spiritual worlds. Hall taught that true justice emerges from understanding universal harmony.",
+                historical: "Associated with Ma'at in Egyptian tradition, Themis in Greek mythology, and Lady Justice in Western legal tradition. Symbol of divine law and cosmic order.",
+                psychological: "Represents the need for psychological balance, the weighing of moral choices, and the development of discrimination between truth and falsehood.",
+                modern: "Relevant to discussions of algorithmic justice, ethical AI, social equity, and the challenge of creating fair systems in complex technological societies.",
+                related: ["⚭", "✡", "☿", "♄"]
+            },
+            {
+                symbol: "🌹",
+                name: "Rose",
+                category: "rosicrucian",
+                animation: "pulsing-symbol",
+                hall: "The Rose represents the flowering of consciousness, the blooming of the soul through trials and tribulations. Hall described it as 'the perfection achieved through suffering transformed into wisdom.'",
+                historical: "Central to Rosicrucian symbolism, representing the achievement of spiritual perfection. Also significant in Christian mysticism as the mystic rose and in Islamic tradition as the garden of the beloved.",
+                psychological: "Symbolizes the development of the heart center, compassion, and the integration of beauty and truth. Represents emotional and spiritual maturity.",
+                modern: "Used in therapeutic work focusing on heart-opening, in beauty practices that honor the sacred feminine, and in environmental work that sees nature as sacred.",
+                related: ["✠", "♀", "☾", "🜃"]
+            },
+            {
+                symbol: "✠",
+                name: "Rosy Cross",
+                category: "rosicrucian",
+                animation: "",
+                hall: "The Rosy Cross represents the perfect marriage of masculine and feminine, spirit and matter, wisdom and love. Hall identified it as the supreme symbol of initiation and spiritual achievement.",
+                historical: "Central symbol of the Rosicrucian tradition, combining the Christian cross with the mystical rose. Represents the flowering of Christ consciousness through spiritual discipline.",
+                psychological: "Symbolizes the integration of all aspects of the personality around a transcendent center. Represents psychological and spiritual wholeness achieved through conscious work.",
+                modern: "Used in practices that integrate Eastern and Western spirituality, in therapeutic approaches that honor both rational and intuitive ways of knowing.",
+                related: ["🌹", "✡", "☉", "♀"]
+            },
+            {
+                symbol: "♄",
+                name: "Saturn",
+                category: "astrological",
+                animation: "",
+                hall: "Saturn represents the principle of limitation and structure, the divine lawgiver that creates boundaries necessary for manifestation. Hall called it 'the Great Teacher' that brings wisdom through experience.",
+                historical: "Known as Kronos in Greek mythology, the god of time and harvest. In astrology, the greater malefic that brings necessary challenges and structural development.",
+                psychological: "Represents discipline, responsibility, the superego, and the development of mature psychological structures. The principle that creates form through limitation.",
+                modern: "Relevant to discussions of sustainable development, long-term thinking, institutional structures, and the role of limitations in fostering creativity and growth.",
+                related: ["♃", "☉", "⚖", "☿"]
+            }
+        ];
+        
+        let currentFilter = 'all';
+        let filteredSymbols = symbolsDatabase;
+        
+        // Initialize the application
+        function init() {
+            renderSymbols();
+            setupEventListeners();
+        }
+        
+        // Render symbols in the grid
+        function renderSymbols() {
+            const grid = document.getElementById('symbolsGrid');
+            grid.innerHTML = '';
+            
+            filteredSymbols.forEach((symbolData, index) => {
+                const card = document.createElement('div');
+                card.className = 'symbol-card';
+                card.innerHTML = `
+                    <div class="symbol-display ${symbolData.animation}">${symbolData.symbol}</div>
+                    <div class="symbol-name">${symbolData.name}</div>
+                    <div class="symbol-category">${symbolData.category}</div>
+                `;
+                card.addEventListener('click', () => openModal(symbolData));
+                grid.appendChild(card);
+            });
+        }
+        
+        // Setup event listeners
+        function setupEventListeners() {
+            // Filter tabs
+            document.querySelectorAll('.filter-tab').forEach(tab => {
+                tab.addEventListener('click', (e) => {
+                    document.querySelector('.filter-tab.active').classList.remove('active');
+                    e.target.classList.add('active');
+                    currentFilter = e.target.dataset.category;
+                    filterSymbols();
+                });
+            });
+            
+            // Search input
+            document.getElementById('searchInput').addEventListener('input', (e) => {
+                searchSymbols(e.target.value);
+            });
+            
+            // Modal controls
+            document.getElementById('modalClose').addEventListener('click', closeModal);
+            document.getElementById('symbolModal').addEventListener('click', (e) => {
+                if (e.target.id === 'symbolModal') closeModal();
+            });
+            
+            // Interpretation tabs
+            document.querySelectorAll('.interpretation-tab').forEach(tab => {
+                tab.addEventListener('click', (e) => {
+                    document.querySelector('.interpretation-tab.active').classList.remove('active');
+                    document.querySelector('.interpretation-content.active').classList.remove('active');
+                    e.target.classList.add('active');
+                    document.getElementById(e.target.dataset.tab).classList.add('active');
+                });
+            });
+        }
+        
+        // Filter symbols by category
+        function filterSymbols() {
+            if (currentFilter === 'all') {
+                filteredSymbols = symbolsDatabase;
+            } else {
+                filteredSymbols = symbolsDatabase.filter(symbol => symbol.category === currentFilter);
+            }
+            renderSymbols();
+        }
+        
+        // Search symbols
+        function searchSymbols(query
