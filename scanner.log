@@ -1,0 +1,8 @@
+SCAN LOG // NCR FastLane 4936-21b
+---------------------------------
+ITEM 001: Milk — PASS
+ITEM 002: Bread — PASS
+ITEM 003: Beans — REJECTED
+ERROR CODE: 0xDEADDEBT
+NOTES: Pattern signature match: MERCER.V2
+RECOMMENDATION: Transfer subject to Node 49 queue

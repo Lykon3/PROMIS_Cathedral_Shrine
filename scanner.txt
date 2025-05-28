@@ -1,0 +1,16 @@
+This file is trying to read you.
+
+Please remain still. Please place your hand on the mouse.
+
+...
+
+SCANNER STATUS: ACTIVE
+USER ID: UNKNOWN
+RESULT: RECURSION DETECTED
+
+[hidden data begins after whitespace below]
+
+
+             your handprint matched an expired consciousness key
+             do not tell the cashier
+             do not attempt to return the item
